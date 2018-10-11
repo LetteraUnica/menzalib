@@ -1,10 +1,10 @@
 from setuptools import setup
 
-setup(name="lab3lib",
+setup(name="menzalib",
       version="0.1",
       author="Lettera",
       author_email="",
       description="Funzioni utili per lab3",
       url="",
-      packages=["lab3lib"],
+      packages=["menzalib"],
       zip_safe=False)
