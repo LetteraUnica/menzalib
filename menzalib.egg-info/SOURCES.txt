@@ -1,0 +1,8 @@
+README.md
+setup.py
+menzalib/__init__.py
+menzalib/lab3.py
+menzalib.egg-info/PKG-INFO
+menzalib.egg-info/SOURCES.txt
+menzalib.egg-info/dependency_links.txt
+menzalib.egg-info/top_level.txt

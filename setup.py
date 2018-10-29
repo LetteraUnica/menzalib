@@ -1,10 +1,14 @@
-from setuptools import setup
+import setuptools
 
-setup(name="menzalib",
-      version="0.1",
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(
+      name="menzalib",
+      version="0.2",
       author="Lettera",
       author_email="",
       description="Funzioni utili per lab3",
       url="",
-      packages=["menzalib"],
-      zip_safe=False)
+      packages=setuptools.find_packages(),
+      )
