@@ -84,19 +84,20 @@ def errore_logaritmo10(x, dx):
 dlog10=vectorize(errore_logaritmo10)
 
 
-# RIVEDERE CALCOLO DERIVATA
-# Fa il curve fit considerando errori sulla x
+# Esegue il curve fit considerando anche gli errori sulla x
 # Author: Lorenzo Cavuoti
-def fit_errorix(f, x, y, p0=None, dx=None, dy=None, df=None, nit=None, absolute_sigma=None):
-    
-    if dx is None:
-        dx=np.zeros(len(x))
-    
+def curve_fitdx(f, x, y, dx=None, dy=None, df=None, p0=None, nit=None, absolute_sigma=None):
+
+    # Inizializzazione variabili, se la derivata
+    # non è data esplicitamente la approssimo con scipy
     if df is None:
         if dx:
-            df=lambda x: derivative(f, x, dx=10**-4, order=5)
+            df=lambda x, *popt: derivative(f, x, dx=10**-4, order=5, args=popt)
         else:
             df=zeros(len(x))
+    
+    if dx is None:
+        dx=zeros(len(x))
     
     if nit is None: 
         nit=10
@@ -104,8 +105,10 @@ def fit_errorix(f, x, y, p0=None, dx=None, dy=None, df=None, nit=None, absolute_
     if absolute_sigma is None:
         abs_sigma=False
 
+    # Eseguo il fit
     sigma_eff = dy
     for i in range(nit):
         popt, pcov = curve_fit(f, x, y, p0, sigma_eff, absolute_sigma=abs_sigma)
-        sigma_eff = sqrt(dy**2 + (df(x)*dx)**2)
+        sigma_eff = sqrt(dy**2 + (df(x, *popt)*dx)**2)
+
     return popt, pcov
