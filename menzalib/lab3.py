@@ -1,4 +1,4 @@
-from numpy import sqrt, sort, vectorize, absolute, log, ones, zeros, array
+from numpy import sqrt, sort, vectorize, absolute, log, ones, zeros, array,round,floor,log10
 from scipy.optimize import curve_fit
 from scipy.misc import derivative
 
@@ -112,3 +112,47 @@ def curve_fitdx(f, x, y, dx=None, dy=None, df=None, p0=None, nit=None, absolute_
         sigma_eff = sqrt(dy**2 + (df(x, *popt)*dx)**2)
 
     return popt, pcov
+
+
+#funzione della notazione scientifica di un singolo numero con un numero di riferimento nrif
+"""ad esempio se nrif=500 e n=4896 stampa n con l'ordine di grandezza di nrif, cioè ritorna
+    48.96 X 10^2"""
+#Author: Francesco Sacco
+def notazione_scientifica_latex(n,nrif):
+    exp=int(floor(log10(nrif)))#guardo l'ordine di grandezza di nrif
+    n=n/10**exp #porto n nell'ordine di grandezza di nrif
+    n=round(n,2)#arrotondo alla seconda cifra dopo la virgola
+    if exp==0: return "$"+str(n)+"$"
+    return "$"+str(n)+"\\times 10^{"+str(exp)+"}$" #ritorna la stringa in latex
+#vettorizzo
+ns_tex=vectorize(notazione_scientifica_latex)
+
+
+
+#funzione della notazione scientifica di un valore x con errore
+#stampa una stringa contenente i due valori stampati per bene in latex
+#Author: Francesco Sacco
+def numero_con_errore_latex(x,dx):
+    exp=int(floor(log10(x)))#guardo l'ordine di grandezza di x
+    x=x/10**exp     #porto la virgola dopo la prima cifra
+    dx=dx/10**exp   #porto la virgola dove si trova quella della x
+    cifr=int(floor(log10(dx)))  #guardo l'ordine di grandezza di dx
+    #taglio le di x con un ordine di grandezza inferiore a dx
+    x=round(x,absolute(cifr))       
+    dx=round(dx,absolute(cifr)) #taglio le cifre significative di dx dopo la prima
+    #ritorno la stringa in latex
+    if exp==0:
+        return  "$"+str(x)+"\\pm"+str(dx)+"$" 
+    return  "$("+str(x)+"\\pm"+str(dx)+")\\times 10^{"+str(exp)+"}$"
+#vettorizzo la funzione
+ne_tex=vectorize(numero_con_errore_latex)
+
+
+
+
+
+
+
+
+
+
