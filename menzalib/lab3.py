@@ -1,4 +1,4 @@
-from numpy import sqrt, sort, vectorize, absolute, log, ones, zeros, array,round,floor,log10
+from numpy import sqrt, sort, vectorize, absolute, log, ones, zeros, array,round,floor,log10,traspose
 from scipy.optimize import curve_fit
 from scipy.misc import derivative
 
@@ -148,7 +148,19 @@ def numero_con_errore_latex(x,dx):
 ne_tex=vectorize(numero_con_errore_latex)
 
 
-
+#Funzione che stampa una matrice fatta di stringhe in un formato comodo per latex
+#Author: Francesco Sacco
+def stampa_matrice_latex(M):
+    M=transpose(M)
+    print('\n\nCopia tutto quello che c\'è tra le linee')
+    print('--------------------------')
+    print('\\begin{ tabular }\n \\hline\n $ qua ci va il titolo della tabella $\n \\hline')
+    for colonna in M:
+        stringa='\t'
+        for numero in colonna:
+            stringa=stringa+numero+' & '
+        print(stringa[:-2]+'\\\\')
+    print('\\end{ tabular }\n--------------------------\n\n')
 
 
 
