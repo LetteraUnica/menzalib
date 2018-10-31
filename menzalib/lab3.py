@@ -6,12 +6,12 @@ from scipy.misc import derivative
 # supponendo che si sia scelta la scala corretta
 # Author: Francesco Sacco
 def errore_ddp_digitale(V):
-    if V<0.2: return sqrt(V**2*25e-6+1e-8)
-    if V<2:   return sqrt(V**2*25e-6+1e-6)
-    if V<20:  return sqrt(V**2*25e-6+1e-4)
-    if V<200: return sqrt(V**2*25e-6+1e-2)
-    print("Tollerati valori minori di 200V")
-    return
+	if V<0.2: return sqrt(V**2*25e-6+1e-8)
+	if V<2:   return sqrt(V**2*25e-6+1e-6)
+	if V<20:  return sqrt(V**2*25e-6+1e-4)
+	if V<200: return sqrt(V**2*25e-6+1e-2)
+	print("Tollerati valori minori di 200V")
+	return
 
 dVdig=vectorize(errore_ddp_digitale)
 
@@ -19,14 +19,14 @@ dVdig=vectorize(errore_ddp_digitale)
 # supponendo che si sia scelta la scala corretta
 # Author: Francesco Sacco
 def errore_res_digitale(R):
-    if R<200: return sqrt(R**2*64e-6+9e-2)
-    if R<2e3: return sqrt(R**2*64e-6+1)
-    if R<2e4: return sqrt(R**2*64e-6+1e2)
-    if R<2e5: return sqrt(R**2*64e-6+1e4)
-    if R<2e6: return sqrt(R**2*64e-6+1e6)
-    if R<2e7: return sqrt(R**2*1e-4+1e8)
-    print("Tollerati valori minori di 2*10^7 ohm")
-    return
+	if R<200: return sqrt(R**2*64e-6+9e-2)
+	if R<2e3: return sqrt(R**2*64e-6+1)
+	if R<2e4: return sqrt(R**2*64e-6+1e2)
+	if R<2e5: return sqrt(R**2*64e-6+1e4)
+	if R<2e6: return sqrt(R**2*64e-6+1e6)
+	if R<2e7: return sqrt(R**2*1e-4+1e8)
+	print("Tollerati valori minori di 2*10^7 ohm")
+	return
 
 dRdig=vectorize(errore_res_digitale)
 
@@ -36,7 +36,7 @@ dRdig=vectorize(errore_res_digitale)
 def errore_capacita(C):
 	ep=C*0.04 #questo è l'errore percentuale
 	for i in range(-9,-5):
-	    if C<2*10**i: return sqrt(ep**2+9*10**(i*2-6))
+		if C<2*10**i: return sqrt(ep**2+9*10**(i*2-6))
 	print("Tollerati valori minori di 50 micro farad")
 	return
 
@@ -59,27 +59,27 @@ dVosc=vectorize(errore_osc_volt)
 # Propagazione di incertezze in alcune funzioni utili
 # Author: Lorenzo Cavuoti
 def errore_rapporto(x, dx, y, dy):
-    return 1/y**2 * sqrt((y*dx)**2 + (x*dy)**2)
+	return 1/y**2 * sqrt((y*dx)**2 + (x*dy)**2)
 
 drapp=vectorize(errore_rapporto)
 
 def errore_prodotto(x, dx, y, dy):
-    return sqrt((y*dx)**2 + (x*dy)**2)
+	return sqrt((y*dx)**2 + (x*dy)**2)
 
 dprod=vectorize(errore_prodotto)
 
 def errore_polinomiale(x, dx, a):
-    return absolute(a*x**(a-1)*dx)
+	return absolute(a*x**(a-1)*dx)
 
 dpoli=vectorize(errore_polinomiale)
 
 def errore_logaritmo(x, dx):
-    return dx/x
+	return dx/x
 
 dlog=vectorize(errore_logaritmo)
 
 def errore_logaritmo10(x, dx):
-    return dx/(x*log(10))
+	return dx/(x*log(10))
 
 dlog10=vectorize(errore_logaritmo10)
 
@@ -119,11 +119,11 @@ def curve_fitdx(f, x, y, dx=None, dy=None, df=None, p0=None, nit=None, absolute_
     48.96 X 10^2"""
 #Author: Francesco Sacco
 def notazione_scientifica_latex(n,nrif):
-    exp=int(floor(log10(nrif)))#guardo l'ordine di grandezza di nrif
-    n=n/10**exp #porto n nell'ordine di grandezza di nrif
-    n=round(n,2)#arrotondo alla seconda cifra dopo la virgola
-    if exp==0: return "$"+str(n)+"$"
-    return "$"+str(n)+"\\times 10^{"+str(exp)+"}$" #ritorna la stringa in latex
+	exp=int(floor(log10(nrif)))#guardo l'ordine di grandezza di nrif
+	n=n/10**exp #porto n nell'ordine di grandezza di nrif
+	n=round(n,2)#arrotondo alla seconda cifra dopo la virgola
+	if exp==0: return "$"+str(n)+"$"
+	return "$"+str(n)+"\\times 10^{"+str(exp)+"}$" #ritorna la stringa in latex
 #vettorizzo
 ns_tex=vectorize(notazione_scientifica_latex)
 
@@ -133,17 +133,17 @@ ns_tex=vectorize(notazione_scientifica_latex)
 #stampa una stringa contenente i due valori stampati per bene in latex
 #Author: Francesco Sacco
 def numero_con_errore_latex(x,dx):
-    exp=int(floor(log10(x)))#guardo l'ordine di grandezza di x
-    x=x/10**exp     #porto la virgola dopo la prima cifra
-    dx=dx/10**exp   #porto la virgola dove si trova quella della x
-    cifr=int(floor(log10(dx)))  #guardo l'ordine di grandezza di dx
-    #taglio le di x con un ordine di grandezza inferiore a dx
-    x=round(x,absolute(cifr))       
-    dx=round(dx,absolute(cifr)) #taglio le cifre significative di dx dopo la prima
-    #ritorno la stringa in latex
+	exp=int(floor(log10(x)))#guardo l'ordine di grandezza di x
+	x=x/10**exp     #porto la virgola dopo la prima cifra
+	dx=dx/10**exp   #porto la virgola dove si trova quella della x
+	cifr=int(floor(log10(dx)))  #guardo l'ordine di grandezza di dx
+	#taglio le di x con un ordine di grandezza inferiore a dx
+	x=round(x,absolute(cifr))       
+	dx=round(dx,absolute(cifr)) #taglio le cifre significative di dx dopo la prima
+	#ritorno la stringa in latex
     if exp==0:
-        return  "$"+str(x)+"\\pm"+str(dx)+"$" 
-    return  "$("+str(x)+"\\pm"+str(dx)+")\\times 10^{"+str(exp)+"}$"
+		return  "$"+str(x)+"\\pm"+str(dx)+"$" 
+	return  "$("+str(x)+"\\pm"+str(dx)+")\\times 10^{"+str(exp)+"}$"
 #vettorizzo la funzione
 ne_tex=vectorize(numero_con_errore_latex)
 
@@ -151,16 +151,22 @@ ne_tex=vectorize(numero_con_errore_latex)
 #Funzione che stampa una matrice fatta di stringhe in un formato comodo per latex
 #Author: Francesco Sacco
 def stampa_matrice_latex(M):
-    M=transpose(M)
-    print('\n\nCopia tutto quello che c\'è tra le linee')
-    print('--------------------------')
-    print('\\begin{ tabular }\n \\hline\n $ qua ci va il titolo della tabella $\n \\hline')
-    for colonna in M:
-        stringa='\t'
-        for numero in colonna:
-            stringa=stringa+numero+' & '
-        print(stringa[:-2]+'\\\\')
-    print('\\end{ tabular }\n--------------------------\n\n')
+	tipo_tabella='{'
+	for i in range(len(M)):
+		tipo_tabella=tipo_tabella+'c'
+	tipo_tabella=tipo_tabella+'}'
+	M=transpose(M)
+
+	print('\n\nCopia tutto quello che c\'è tra le linee')
+	print('--------------------------')
+	print('\\begin{tabular}'+tipo_tabella)
+	print('\\hline\n % qua ci va il titolo della tabella (ricorda di mettere \\\\ alla fine) %\n \\hline')
+	for colonna in M:
+		stringa='\t'
+		for numero in colonna:
+			stringa=stringa+numero+' & '
+		print(stringa[:-2]+'\\\\')
+	print('\\end{tabular}\n--------------------------\n\n')
 
 
 
