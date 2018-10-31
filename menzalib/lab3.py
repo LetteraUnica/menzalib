@@ -151,12 +151,8 @@ ne_tex=vectorize(numero_con_errore_latex)
 #Funzione che stampa una matrice fatta di stringhe in un formato comodo per latex
 #Author: Francesco Sacco
 def stampa_matrice_latex(M):
-	tipo_tabella='{'
-	for i in range(len(M)):
-		tipo_tabella=tipo_tabella+'c'
-	tipo_tabella=tipo_tabella+'}'
+	tipo_tabella='{'+(len(M)*'c')+'}'
 	M=transpose(M)
-
 	print('\n\nCopia tutto quello che c\'è tra le linee')
 	print('--------------------------')
 	print('\\begin{tabular}'+tipo_tabella)
