@@ -92,7 +92,7 @@ def curve_fitdx(f, x, y, dx=None, dy=None, df=None, p0=None, nit=None, absolute_
     # non è data esplicitamente la approssimo con scipy
     if df is None:
         if dx:
-            df=lambda x, *popt: derivative(f, x, dx=10**-4, order=5, args=popt)
+            df=lambda x, *popt: derivative(f, x, dx=1e-4, order=5, args=popt)
         else:
             df=zeros(len(x))
     
