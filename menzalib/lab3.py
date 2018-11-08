@@ -49,9 +49,9 @@ dCdig=vectorize(errore_capacita)
 # Author: Francesco Sacco
 def errore_osc_volt(V):
 	scala=sort([2e-3,2e-2,2e-1,2,5e-3,5e-2,5e-1,5,1e-2,1e-1,1])
-	for i in range(0,len(scala)):
-		if V<scala[i]*8:
-			return sqrt((V*0.04)**2+(scala[i]/10)**2)
+	for i in scala:
+		if V<i*8:
+			return sqrt((V*0.04)**2+(i/10)**2)
 	print("Tollerati valori minori di 40V")
 	return
 	
