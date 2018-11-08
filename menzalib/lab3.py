@@ -89,51 +89,51 @@ dlog10=vectorize(errore_logaritmo10)
 # Author: Lorenzo Cavuoti
 def curve_fitdx(f, x, y, dx=None, dy=None, df=None, p0=None, nit=None, absolute_sigma=None):
 
-    # Inizializzazione variabili, se la derivata
-    # non è data esplicitamente la approssimo con scipy
-    if df is None:
-        if dx:
-            df=lambda x, *popt: derivative(f, x, dx=1e-4, order=5, args=popt)
-        else:
-            df=zeros(len(x))
-    
-    if dx is None:
-        dx=zeros(len(x))
-    
-    if nit is None: 
-        nit=10
-    
-    if absolute_sigma is None:
-        abs_sigma=False
+	# Inizializzazione variabili, se la derivata
+	# non è data esplicitamente la approssimo con scipy
+	if df is None:
+		if dx:
+			df=lambda x, *popt: derivative(f, x, dx=1e-4, order=5, args=popt)
+		else:
+			df=zeros(len(x))
+	
+	if dx is None:
+		dx=zeros(len(x))
+	
+	if nit is None: 
+		nit=10
+	
+	if absolute_sigma is None:
+		abs_sigma=False
 
-    # Eseguo il fit
-    sigma_eff = dy
-    for i in range(nit):
-        popt, pcov = curve_fit(f, x, y, p0, sigma_eff, absolute_sigma=abs_sigma)
-        sigma_eff = sqrt(dy**2 + (df(x, *popt)*dx)**2)
+	# Eseguo il fit
+	sigma_eff = dy
+	for i in range(nit):
+		popt, pcov = curve_fit(f, x, y, p0, sigma_eff, absolute_sigma=abs_sigma)
+		sigma_eff = sqrt(dy**2 + (df(x, *popt)*dx)**2)
 
-    return popt, pcov
+	return popt, pcov
 
 """funzione che calcola l'intersezione ed errore tra due rette indipendenti
-    con equazioni y=x*m1+q1 e y=x*m2+q2"""
+	con equazioni y=x*m1+q1 e y=x*m2+q2"""
 #Authonr: Francesco Sacco
 def int_rette(popt1,popt2,pcov1,pcov2):
-    q1,q2=popt1[0],popt2[0]
-    m1,m2=popt1[1],popt2[1]
-    pcov=zeros((4,4))
-    pcov[:2,:2]=pcov1
-    pcov[2:,2:]=pcov2
-    gradientex=([1/(m1-m2),-(q1-q2)/(m1-m2)**2,
-               -1/(m1-m2), (q1-q2)/(m1-m2)**2])
-    x=(q2-q1)/(m1-m2)
-    y=(q2*m1-q1*m2)/(m1-m2)
-    dx=sqrt(multi_dot([gradientex,pcov,gradientex]))
-    return ([x,y,dx])
+	q1,q2=popt1[0],popt2[0]
+	m1,m2=popt1[1],popt2[1]
+	pcov=zeros((4,4))
+	pcov[:2,:2]=pcov1
+	pcov[2:,2:]=pcov2
+	gradientex=([1/(m1-m2),-(q1-q2)/(m1-m2)**2,
+			   -1/(m1-m2), (q1-q2)/(m1-m2)**2])
+	x=(q2-q1)/(m1-m2)
+	y=(q2*m1-q1*m2)/(m1-m2)
+	dx=sqrt(multi_dot([gradientex,pcov,gradientex]))
+	return ([x,y,dx])
 
 
 #funzione della notazione scientifica di un singolo numero con un numero di riferimento nrif
 """ad esempio se nrif=500 e n=4896 stampa n con l'ordine di grandezza di nrif, cioè ritorna
-    48.96 X 10^2"""
+	48.96 X 10^2"""
 #Author: Francesco Sacco
 def notazione_scientifica_latex(n,nrif):
 	exp=int(floor(log10(nrif)))#guardo l'ordine di grandezza di nrif
@@ -158,7 +158,7 @@ def numero_con_errore_latex(x,dx):
 	x=round(x,absolute(cifr))       
 	dx=round(dx,absolute(cifr)) #taglio le cifre significative di dx dopo la prima
 	#ritorno la stringa in latex
-    if exp==0:
+	if exp==0:
 		return  "$"+str(x)+"\\pm"+str(dx)+"$" 
 	return  "$("+str(x)+"\\pm"+str(dx)+")\\times 10^{"+str(exp)+"}$"
 #vettorizzo la funzione
