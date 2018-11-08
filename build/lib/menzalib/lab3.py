@@ -1,4 +1,4 @@
-from numpy import sqrt, sort, vectorize, absolute, log, ones, zeros, array, round, floor, log10
+from numpy import sqrt, sort, vectorize, absolute, log, ones, zeros, array,round,floor,log10
 from scipy.optimize import curve_fit
 from scipy.misc import derivative
 
