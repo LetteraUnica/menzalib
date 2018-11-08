@@ -2,6 +2,8 @@ from numpy import sqrt, sort, vectorize, absolute, log, ones, zeros, array,round
 from numpy.linalg import multi_dot
 from scipy.optimize import curve_fit
 from scipy.misc import derivative
+from scipy.stats import chi2
+
 
 # Errore della misura di ddp del multimetro digitale
 # supponendo che si sia scelta la scala corretta
@@ -66,12 +68,12 @@ def errore_osc_tempo(t):
 		scala.append(5*10**(i))
 		scala.append(2.5*10**(i))
 		scala.append(10**(i))
-	scala=np.sort([scala])
+	scala=sort([scala])
 	for i in scala:
 		if t<10*i:  return i*0.04
 	print('Tempo troppo lungo')
 	return
-dt_osc=np.vectorize(errore_osc_tempo)
+dt_osc=vectorize(errore_osc_tempo)
 # Propagazione di incertezze in alcune funzioni utili
 # Author: Lorenzo Cavuoti
 def errore_rapporto(x, dx, y, dy):
@@ -136,7 +138,7 @@ def curve_fitdx(f, x, y, dx=None, dy=None, df=None, p0=None, nit=None, absolute_
 def chi2_pval(f,x,y,dy,popt,dx=None,df=None):
 	if (df is None) and (dx is not None):
 		df=lambda x, *popt: derivative(f, x, dx=1e-4, order=5, args=popt)
-	if dx is not None: dy=np.sqrt(dy**2 + (df(x, *popt)*dx)**2)
+	if dx is not None: dy=sqrt(dy**2 + (df(x, *popt)*dx)**2)
 	chi=0
 	for i in range (len(x)):
 		chi=chi+(f(x[i],*popt)-dy[i])**2/dy[i]
