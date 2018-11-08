@@ -1,4 +1,4 @@
-from numpy import sqrt, sort, vectorize, absolute, log, ones, zeros, array,round,floor,log10,traspose
+from numpy import sqrt, sort, vectorize, absolute, log, ones, zeros, array,round,floor,log10,transpose
 from numpy.linalg import multi_dot
 from scipy.optimize import curve_fit
 from scipy.misc import derivative
@@ -53,10 +53,25 @@ def errore_osc_volt(V):
 		if V<i*8:
 			return sqrt((V*0.04)**2+(i/10)**2)
 	print("Tollerati valori minori di 40V")
-	return
-	
+	return	
 dVosc=vectorize(errore_osc_volt)
 
+
+# Errore della misura del lempo dell'oscilloscopio
+#Authoe:Francesco Sacco
+def errore_osc_tempo(t):
+	# da 5ns a 50s comprendente 1,2.5,5 *10^i
+	scala=[5e-9]
+	for i in range (-8,2):
+		scala.append(5*10**(i))
+		scala.append(2.5*10**(i))
+		scala.append(10**(i))
+	scala=np.sort([scala])
+	for i in scala:
+		if t<10*i:  return i*0.04
+	print('Tempo troppo lungo')
+	return
+dt_osc=np.vectorize(errore_osc_tempo)
 # Propagazione di incertezze in alcune funzioni utili
 # Author: Lorenzo Cavuoti
 def errore_rapporto(x, dx, y, dy):
@@ -92,7 +107,7 @@ def curve_fitdx(f, x, y, dx=None, dy=None, df=None, p0=None, nit=None, absolute_
 	# Inizializzazione variabili, se la derivata
 	# non è data esplicitamente la approssimo con scipy
 	if df is None:
-		if dx:
+		if dx is not None:
 			df=lambda x, *popt: derivative(f, x, dx=1e-4, order=5, args=popt)
 		else:
 			df=zeros(len(x))
@@ -113,6 +128,21 @@ def curve_fitdx(f, x, y, dx=None, dy=None, df=None, p0=None, nit=None, absolute_
 		sigma_eff = sqrt(dy**2 + (df(x, *popt)*dx)**2)
 
 	return popt, pcov
+
+
+"""funzione che gli dai la funzione con punti sperimentali con errore 
+	e lui ti ritorna il chi2"""
+#Author: Francesco Sacco
+def chi2_pval(f,x,y,dy,popt,dx=None,df=None):
+	if (df is None) and (dx is not None):
+		df=lambda x, *popt: derivative(f, x, dx=1e-4, order=5, args=popt)
+	if dx is not None: dy=np.sqrt(dy**2 + (df(x, *popt)*dx)**2)
+	chi=0
+	for i in range (len(x)):
+		chi=chi+(f(x[i],*popt)-dy[i])**2/dy[i]
+	pvalue=chi2.cdf(chi,len(x))
+	return chi, pvalue
+
 
 """funzione che calcola l'intersezione ed errore tra due rette indipendenti
 	con equazioni y=x*m1+q1 e y=x*m2+q2"""
@@ -180,7 +210,6 @@ def stampa_matrice_latex(M):
 			stringa=stringa+numero+' & '
 		print(stringa[:-2]+'\\\\')
 	print('\\end{tabular}\n--------------------------\n\n')
-
 
 
 
