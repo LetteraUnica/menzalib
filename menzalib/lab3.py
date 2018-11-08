@@ -1,4 +1,5 @@
 from numpy import sqrt, sort, vectorize, absolute, log, ones, zeros, array,round,floor,log10,traspose
+from numpy.linalg import multi_dot
 from scipy.optimize import curve_fit
 from scipy.misc import derivative
 
@@ -112,6 +113,22 @@ def curve_fitdx(f, x, y, dx=None, dy=None, df=None, p0=None, nit=None, absolute_
         sigma_eff = sqrt(dy**2 + (df(x, *popt)*dx)**2)
 
     return popt, pcov
+
+"""funzione che calcola l'intersezione ed errore tra due rette indipendenti
+    con equazioni y=x*m1+q1 e y=x*m2+q2"""
+#Authonr: Francesco Sacco
+def int_rette(popt1,popt2,pcov1,pcov2):
+    q1,q2=popt1[0],popt2[0]
+    m1,m2=popt1[1],popt2[1]
+    pcov=zeros((4,4))
+    pcov[:2,:2]=pcov1
+    pcov[2:,2:]=pcov2
+    gradientex=([1/(m1-m2),-(q1-q2)/(m1-m2)**2,
+               -1/(m1-m2), (q1-q2)/(m1-m2)**2])
+    x=(q2-q1)/(m1-m2)
+    y=(q2*m1-q1*m2)/(m1-m2)
+    dx=sqrt(multi_dot([gradientex,pcov,gradientex]))
+    return ([x,y,dx])
 
 
 #funzione della notazione scientifica di un singolo numero con un numero di riferimento nrif
