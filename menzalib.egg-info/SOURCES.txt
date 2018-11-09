@@ -1,5 +1,6 @@
 README.md
 setup.py
+menzalib/WIP.py
 menzalib/__init__.py
 menzalib/lab3.py
 menzalib.egg-info/PKG-INFO
