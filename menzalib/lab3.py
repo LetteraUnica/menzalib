@@ -59,29 +59,20 @@ dVosc=vectorize(errore_osc_volt)
 # Errore della misura del lempo dell'oscilloscopio
 #Author:Francesco Sacco
 def errore_osc_tempo(t):
-	# da 5ns a 50s comprendente 1,2.5,5 *10^i
+	## da 5ns a 50s comprendente 1,2.5,5 *10^i
 	scala=[5e-9]
-	for i in range (-8,1):
+	for i in range (-8,2):
 		scala.append(5*10**(i))
 		scala.append(2.5*10**(i))
 		scala.append(10**(i))
 	scala=sort(scala)
 	for i in scala:
-<<<<<<< HEAD
-		if t<10*i:
-=======
 		if t<10*i:  
->>>>>>> ce38116cd4370a85aa5e0f1b3d4a8238697a2504
 			return i*0.04
 	print('Tempo troppo lungo')
 	return
 dtosc=vectorize(errore_osc_tempo)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> ce38116cd4370a85aa5e0f1b3d4a8238697a2504
-# Propagazione di incertezze in alcune funzioni utili
 # Author: Lorenzo Cavuoti
 def errore_rapporto(x, dx, y, dy):
 	return 1/y**2 * sqrt((y*dx)**2 + (x*dy)**2)
