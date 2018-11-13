@@ -15,7 +15,6 @@ def errore_ddp_digitale(V):
 	if V<200: return sqrt(V**2*25e-6+1e-2)
 	print("Tollerati valori minori di 200V")
 	return
-
 dVdig=vectorize(errore_ddp_digitale)
 
 # Errore della misura di resistenza del multimetro digitale
@@ -30,7 +29,6 @@ def errore_res_digitale(R):
 	if R<2e7: return sqrt(R**2*1e-4+1e8)
 	print("Tollerati valori minori di 2*10^7 ohm")
 	return
-
 dRdig=vectorize(errore_res_digitale)
 
 # Errore della misura di capacità del multimetro digitale
@@ -42,7 +40,6 @@ def errore_capacita(C):
 		if C<2*10**i: return sqrt(ep**2+9*10**(i*2-6))
 	print("Tollerati valori minori di 50 micro farad")
 	return
-
 dCdig=vectorize(errore_capacita)
 
 # Errore della misura di voltagio dell'oscilloscopio
@@ -60,22 +57,30 @@ dVosc=vectorize(errore_osc_volt)
 
 
 # Errore della misura del lempo dell'oscilloscopio
-#Authoe:Francesco Sacco
+#Author:Francesco Sacco
 def errore_osc_tempo(t):
 	# da 5ns a 50s comprendente 1,2.5,5 *10^i
 	scala=[5e-9]
-	for i in range (-8,2):
+	for i in range (-8,1):
 		scala.append(5*10**(i))
 		scala.append(2.5*10**(i))
 		scala.append(10**(i))
 	scala=sort(scala)
 	for i in scala:
+<<<<<<< HEAD
 		if t<10*i:
+=======
+		if t<10*i:  
+>>>>>>> ce38116cd4370a85aa5e0f1b3d4a8238697a2504
 			return i*0.04
 	print('Tempo troppo lungo')
 	return
 dtosc=vectorize(errore_osc_tempo)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> ce38116cd4370a85aa5e0f1b3d4a8238697a2504
 # Propagazione di incertezze in alcune funzioni utili
 # Author: Lorenzo Cavuoti
 def errore_rapporto(x, dx, y, dy):
@@ -137,15 +142,12 @@ def curve_fitdx(f, x, y, dx=None, dy=None, df=None, p0=None, nit=None, abs_sigma
 
 """funzione che gli dai la funzione con punti sperimentali con errore 
 	e lui ti ritorna il chi2"""
-#Author: Francesco Sacco
+#Author: Francesco Sacco, Lorenzo Cavuoti
 def chi2_pval(f,x,y,dy,popt,dx=None,df=None):
 	if (df is None) and (dx is not None):
 		df=lambda x, *popt: derivative(f, x, dx=1e-4, order=5, args=popt)
 	if dx is not None: dy=sqrt(dy**2 + (df(x, *popt)*dx)**2)
 	chi = sum(((f(x,*popt)-y)/dy)**2)
-	#chi=0
-	#for i in range (len(x)):
-	#	chi=chi+(f(x[i],*popt)-dy[i])**2/dy[i]
 	pvalue=chi2.cdf(chi,len(x))
 	return chi, pvalue
 
@@ -172,7 +174,8 @@ def int_rette(popt1,popt2,pcov1,pcov2):
 	48.96 X 10^2"""
 #Author: Francesco Sacco
 def notazione_scientifica_latex(n,nrif):
-	exp=int(floor(log10(nrif)))#guardo l'ordine di grandezza di nrif
+	exp=int(floor(log10(absolute(nrif))))#guardo l'ordine di grandezza di nrif
+	if absolute(exp)==1: exp=0 #nel caso l'esponente è uno o meno uno non uso la n.s.
 	n=n/10**exp #porto n nell'ordine di grandezza di nrif
 	n=round(n,2)#arrotondo alla seconda cifra dopo la virgola
 	if exp==0: return "$"+str(n)+"$"
@@ -186,10 +189,11 @@ ns_tex=vectorize(notazione_scientifica_latex)
 #stampa una stringa contenente i due valori stampati per bene in latex
 #Author: Francesco Sacco
 def numero_con_errore_latex(x,dx):
-	exp=int(floor(log10(x)))#guardo l'ordine di grandezza di x
+	exp=int(floor(log10(absolute(x))))#guardo l'ordine di grandezza di x
+	if absolute(exp)==1: exp=0 #nel caso l'esponente è uno o meno uno non uso la n.s.
 	x=x/10**exp     #porto la virgola dopo la prima cifra
 	dx=dx/10**exp   #porto la virgola dove si trova quella della x
-	cifr=int(floor(log10(dx)))  #guardo l'ordine di grandezza di dx
+	cifr=int(floor(log10(absolute(dx))))  #guardo l'ordine di grandezza di dx
 	#taglio le di x con un ordine di grandezza inferiore a dx
 	x=round(x,absolute(cifr))       
 	dx=round(dx,absolute(cifr)) #taglio le cifre significative di dx dopo la prima
@@ -216,3 +220,8 @@ def stampa_matrice_latex(M):
 			stringa=stringa+numero+' & '
 		print(stringa[:-2]+'\\\\')
 	print('\\end{tabular}\n--------------------------\n\n')
+
+
+
+
+
