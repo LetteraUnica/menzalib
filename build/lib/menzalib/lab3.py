@@ -1,4 +1,4 @@
-from numpy import sqrt, sort, vectorize, absolute, log, ones, zeros, array, round, floor, log10, transpose
+from numpy import sqrt, sort, vectorize, absolute, log, ones, zeros, array, round, floor, log10, transpose, sum
 from numpy.linalg import multi_dot
 from scipy.optimize import curve_fit
 from scipy.misc import derivative
@@ -140,9 +140,10 @@ def chi2_pval(f,x,y,dy,popt,dx=None,df=None):
 	if (df is None) and (dx is not None):
 		df=lambda x, *popt: derivative(f, x, dx=1e-4, order=5, args=popt)
 	if dx is not None: dy=sqrt(dy**2 + (df(x, *popt)*dx)**2)
-	chi=0
-	for i in range (len(x)):
-		chi=chi+(f(x[i],*popt)-dy[i])**2/dy[i]
+	chi = sum(((f(x,*popt)-y)/dy)**2)
+	#chi=0
+	#for i in range (len(x)):
+	#	chi=chi+(f(x[i],*popt)-dy[i])**2/dy[i]
 	pvalue=chi2.cdf(chi,len(x))
 	return chi, pvalue
 

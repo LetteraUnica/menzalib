@@ -73,7 +73,8 @@ def errore_osc_tempo(t):
 		if t<10*i:  return i*0.04
 	print('Tempo troppo lungo')
 	return
-dt_osc=vectorize(errore_osc_tempo)
+dtosc=vectorize(errore_osc_tempo)
+
 # Propagazione di incertezze in alcune funzioni utili
 # Author: Lorenzo Cavuoti
 def errore_rapporto(x, dx, y, dy):
