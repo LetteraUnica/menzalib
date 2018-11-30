@@ -3,6 +3,7 @@ setup.py
 menzalib/WIP.py
 menzalib/__init__.py
 menzalib/lab3.py
+menzalib/errore_capacita.py
 menzalib.egg-info/PKG-INFO
 menzalib.egg-info/SOURCES.txt
 menzalib.egg-info/dependency_links.txt
