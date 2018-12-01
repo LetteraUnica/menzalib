@@ -2,7 +2,10 @@ README.md
 setup.py
 menzalib/WIP.py
 menzalib/__init__.py
-menzalib/lab3.py
+menzalib/analisi_errori.py
+menzalib/latex.py
+menzalib/errore_capacita.py
+menzalib/errori_strumenti.py
 menzalib/errore_capacita.py
 menzalib.egg-info/PKG-INFO
 menzalib.egg-info/SOURCES.txt
