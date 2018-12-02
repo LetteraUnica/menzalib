@@ -1,7 +1,7 @@
 import setuptools
 
-#with open("README.md", "r") as fh:
-#    long_description = fh.read()
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 setuptools.setup(
       name="menzalib",
@@ -9,6 +9,8 @@ setuptools.setup(
       author="Lettera, Francesco215",
       author_email="",
       description="Funzioni utili per lab3",
-      url="",
+      long_description=long_description,
+      long_description_content_type="text/markdown"
+      url="https://bitbucket.org/Lettera/menza-lib",
       packages=setuptools.find_packages(),
       )
