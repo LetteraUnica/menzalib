@@ -54,7 +54,7 @@ def errore_osc_tempo(t):
 	scala=sort(scala)
 	for i in scala:
 		if t<10*i:  
-			return i*0.04+t*5e-2+0.6e-9
+			return i*0.04+t*5e-5+0.6e-9
 	print('Tempo troppo lungo, fai prima a misurarlo a mano')
 	return
 dtosc=vectorize(errore_osc_tempo)
