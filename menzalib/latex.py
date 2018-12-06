@@ -19,8 +19,12 @@ ns_tex=vectorize(notazione_scientifica_latex)
 
 #funzione della notazione scientifica di un valore x con errore
 #stampa una stringa contenente i due valori stampati per bene in latex
+#questa funzione potrebbe avere errori se una delle due variabili è uguale a zero
 #Author: Francesco Sacco
 def numero_con_errore_latex(x,dx):
+	if dx==0 and x==0: return "$0\\pm 0"
+	if x==0: return "$0\\pm "+notazione_scientifica_latex(dx,dx)[1:]
+	if dx==0: return notazione_scientifica_latex(x,x)[:-1]+"\\pm 0"
 	exp=int(floor(log10(absolute(x))))#guardo l'ordine di grandezza di x
 	if absolute(exp)==1: exp=0 #nel caso l'esponente è uno o meno uno non uso la n.s.
 	x=x/10**exp     #porto la virgola dopo la prima cifra
@@ -53,15 +57,15 @@ def mat_tex(Matrice,titolo=None,file=None):
 	else: f=open(file,'w')
 	print('\\begin{tabular}'+tipo_tabella+'\n\\hline',file=f)
 	if titolo is None:
-		print('% qua ci va il titolo della tabella (ricorda di mettere \\\\ alla fine) %\n \\hline',file=f)
-	else: print(titolo+'\n\\hline',file=f)
+		print('\t% qua ci va il titolo della tabella (ricorda di mettere \\\\ alla fine) %\n \\hline',file=f)
+	else: print('\t'+titolo+'\\\\ \n\\hline',file=f)
 	for colonna in Matrice:
 		stringa='\t'
 		for numero in colonna:
 			stringa=stringa+numero+' & '
 		print(stringa[:-2]+'\\\\',file=f)
-	print('\\hline',file=f)
-	if file==stdout: print('\\end{tabular}\n--------------------------\n\n')
+	print('\\hline\n\\end{tabular}',file=f)
+	if file==stdout: print('--------------------------\n\n')
    
 
 

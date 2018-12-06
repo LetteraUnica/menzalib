@@ -5,7 +5,7 @@ import setuptools
 
 setuptools.setup(
       name="menzalib",
-      version="0.5.10",
+      version="0.5.16",
       author="Lettera, Francesco215",
       author_email="",
       description="Funzioni utili per lab3",
