@@ -1,12 +1,11 @@
 README.md
 setup.py
-menzalib/WIP.py
+menzalib/WIP_sacco.py
 menzalib/__init__.py
 menzalib/analisi_errori.py
-menzalib/latex.py
 menzalib/errore_capacita.py
 menzalib/errori_strumenti.py
-menzalib/errore_capacita.py
+menzalib/latex.py
 menzalib.egg-info/PKG-INFO
 menzalib.egg-info/SOURCES.txt
 menzalib.egg-info/dependency_links.txt
