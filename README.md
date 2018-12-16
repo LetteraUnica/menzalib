@@ -2,6 +2,14 @@
 
 Aprire terminale e inserire `pip install menzalib`
 
+### Descrizione rapida della libreria
+Questa libreria è stata creata da studenti del corso di Laboratorio 3 dell'università di Pisa per velocizzare la stesura delle relazioni, contiene funzioni che potrebbero risultare utili pure a corsi come Laboratorio 1 e 2  
+
+Si possono trovare funzioni che calcolano l'errore associato alle misure con multimetro digitale e oscilloscopio, **funzioni per errori di misura**.  
+Funzioni che propagano l'errore delle operazioni matematiche più comuni come prodotto, logaritmo ecc... **funzioni propagazione errori**.  
+Una funzione che esegue il `curve_fit` considerando anche gli errori sulla x e un'altra funzione che calcola chi2 e p\_value **funzioni di fit**.  
+Infine funzioni che permettono stampare una tabella in LaTeX senza dover riscrivere tutti i dati tra $ ed & **Funzioni LaTeX**.
+
 
 ### FUNZIONI PER ERRORI DI MISURA
 
@@ -76,6 +84,18 @@ array([0.1, 0.1, 0.1])
 ```
 
 
+`d_dB(x, dx)` Propaga l'errore sulla funzione f(x)=20*log_10(x), utile per fare l'errore sui decibel
+
+```python
+# Es: Calcolo dell'errore su 20*log(1+-0.1) (Errore sulla conversione di 1 +- 0.1 in decibel)
+
+>>> import menzalib as mz
+>>> mz.d_dB(1, 0.1)
+0.8685889638065035
+>>> mz.d_dB([1,2,3], [0.1, 0.2, 0.3])
+[0.86858896 0.86858896 0.86858896]
+```
+
 
 `int_rette(popt1,popt2,pcov1,pcov2)`  
 Calcola l'intersezione di due rette y=mx+q con errore sulla x del punto di intersezione  
@@ -84,7 +104,7 @@ pcov1,pcov2: Matrice di covarianza dei parametri della retta
 
 ### FUNZIONI DI FIT
 
-`curve_fitdx(f, x, y, dx=None, dy=None, df=None, p0=None, nit=None, absolute_sigma=None)`  
+`curve_fitdx(f, x, y, dx=None, dy=None, p0=None, df=None, nit=None, absolute_sigma=None, chi2pval=False)`  
 Esegue il curve fit considerando anche gli errori sulla x, sintassi molto simile alla funzione `curve_fit` di scipy.  
 Restituisce parametri ottimali di fit e matrice di covarianza  
 In ordine i parametri sono:
@@ -93,26 +113,24 @@ In ordine i parametri sono:
 - y : I dati dipendenti y=f(x, ...)
 - dx: Opzionale, errori sulla x dei punti sperimentali, default=None
 - dy: Opzionale, errori sulla y dei punti sperimentali, default=None
-- df: Opzionale, derivata della funzione di fit, deve essere nella forma df(x, popt) default: derivata approssimata numericamente
 - p0: Opzionale, parametri iniziali per la routine di curve_fit, default=None
+- df: Opzionale, derivata della funzione di fit, deve essere nella forma df(x, popt) default: None, ovvero derivata approssimata numericamente
 - nit: Opzionale, numero massimo di cicli per propagare le incertezze efficaci, default=10
 - absolute_sigma: Opzionale, per una spiegazione dettagliata vedere la pagina sulla
     funzione curve fit di scipy, default=False
 - chi2pval: Opzionale, se chi2pval=True la funzione restituisce anche, in ordine:
-    errore sui parametri ottimali, chi quadro, pvalue, default=False
+    errore sui parametri ottimali, chi_quadro, pvalue, default=False
 
 
 `chi2_pval(f, x, y, dy, popt, dx=None, df=None)`  
-Calcola il chi2 e il pvalue di un fit di una funzione f con parametri ottimali popt, i parametri sono:
+Calcola il chi2 e il pvalue di un fit con una funzione f(x, ...) con parametri ottimali popt, i parametri sono:
 - f : Funzione di fit nella forma f(x, popt)
 - x : Variabile indipendente dove i dati sono misurati
 - y : I dati dipendenti y=f(x, ...)
 - dy: Opzionale, errori sulla y dei punti sperimentali, default=None
-- dx: Opzionale, errori sulla x dei punti sperimentali, default=None
 - popt: Array con i parametri ottimali di fit
 - dx: Opzionale, errori sulla x dei punti sperimentali, default=None
-- df: Opzionale, derivata della funzione di fit, deve essere nella forma df(x, popt) default: derivata approssimata numericamente
-- default: derivata approssimata numericamente
+- df: Opzionale, derivata della funzione di fit, deve essere nella forma df(x, popt) default: None, ovvero derivata approssimata numericamente
 
 ### FUNZIONI LATEX
 
@@ -121,7 +139,7 @@ Funzione della notazione scientifica di un singolo numero con un numero di rifer
 Ad esempio se nrif=500 e n=4896 stampa n con l'ordine di grandezza di nrif, cioè ritorna
 48.96 X 10^2
 	
-`ne_tex(x,dx)` Torna una stringa latex bellina con il valore x e l'errore
+`ne_tex(x,dx)` Ritorna una stringa latex bellina con il valore x e l'errore
 
 `mat_tex(Matrice,titolo=None,file=None)`
 Stampa su terminale una matrice fatta di stringhe per latex

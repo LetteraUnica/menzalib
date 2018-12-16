@@ -5,6 +5,7 @@ menzalib/__init__.py
 menzalib/analisi_errori.py
 menzalib/errore_capacita.py
 menzalib/errori_strumenti.py
+menzalib/funzioni_fit.py
 menzalib/latex.py
 menzalib.egg-info/PKG-INFO
 menzalib.egg-info/SOURCES.txt
