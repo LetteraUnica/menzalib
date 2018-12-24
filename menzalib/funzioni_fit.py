@@ -37,15 +37,20 @@ def curve_fitdx(f, x, y, dx=None, dy=None, p0=None, df=None, nit=10, absolute_si
 
     # Eseguo il fit
     sigma_eff = dy
-    for i in range(nit):
+    chi, chi_old = 1, -1
+    i=0
+    while (i<10 and (chi-chi_old)/chi > 1e-6):
         popt, pcov = curve_fit(f, x, y, p0, sigma_eff, absolute_sigma=absolute_sigma)
         sigma_eff = sqrt(dy**2 + (df(x, *popt)*dx)**2)
+        chi_old = chi
+        chi = sum(((f(x,*popt)-y)/sigma_eff)**2)
+        i += 1
+
 
     if (chi2pval==False):
         return popt, pcov
     else:
         dpopt = sqrt(diag(pcov))
-        chi = sum(((f(x,*popt)-y)/sigma_eff)**2)
         pvalue = chi2.cdf(chi,len(x))
         return popt, pcov, dpopt, chi, pvalue
 
