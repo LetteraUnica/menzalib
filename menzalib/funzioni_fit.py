@@ -1,7 +1,7 @@
 from numpy import sqrt, vectorize, absolute, log, ones, zeros, array, sum, diag
 from scipy.optimize import curve_fit
-from scipy.misc import derivative
 from scipy.stats import chi2
+from numdifftools.nd_algopy import Derivative
 
 # Author: Lorenzo Cavuoti
 def curve_fitdx(f, x, y, dx=None, dy=None, p0=None, df=None, nit=10, absolute_sigma=False, chi2pval=False):
@@ -28,7 +28,7 @@ def curve_fitdx(f, x, y, dx=None, dy=None, p0=None, df=None, nit=10, absolute_si
     # non è data esplicitamente la approssimo con scipy
     if df is None:
         if dx is not None:
-            df=lambda x, *popt: derivative(f, x, dx=10**-4, order=5, args=popt)
+            df=Derivative(f)
         else:
             df=zeros(len(x))
 
@@ -45,7 +45,6 @@ def curve_fitdx(f, x, y, dx=None, dy=None, p0=None, df=None, nit=10, absolute_si
         chi_old = chi
         chi = sum(((f(x,*popt)-y)/sigma_eff)**2)
         i += 1
-
 
     if (chi2pval==False):
         return popt, pcov
@@ -70,7 +69,7 @@ def chi2_pval(f,x,y,dy,popt,dx=None,df=None):
         default: derivata approssimata numericamente
     """
     if (df is None) and (dx is not None):
-        df=lambda x, *popt: derivative(f, x, dx=1e-4, order=5, args=popt)
+        df=Derivative(f)
     if dx is not None: dy=sqrt(dy**2 + (df(x, *popt)*dx)**2)
     chi = sum(((f(x,*popt)-y)/dy)**2)
     pvalue=chi2.cdf(chi,len(x))
