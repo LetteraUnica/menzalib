@@ -135,14 +135,65 @@ Calcola il chi2 e il pvalue di un fit con una funzione f(x, ...) con parametri o
 ### FUNZIONI LATEX
 
 `ns_tex(n,nrif)`  
-Funzione della notazione scientifica di un singolo numero con un numero di riferimento nrif.
-Ad esempio se nrif=500 e n=4896 stampa n con l'ordine di grandezza di nrif, cioè ritorna
-48.96 X 10^2
+Funzione della notazione scientifica di un singolo numero con un numero di riferimento nrif scrito il latex.
+i parametri sono:
+- n: numero da portare in notazione scientifico
+- nrif: Opzionale, serve a dire a che ordine di grandezza deve essere portato il numero, se non specificato assume il valore di n
+
+```python
+# Es: Porto in notazione scientifica 45.897.241
+>>> import menzalib as mz
+>>> mz.ns_tex(45897241)
+$4.59\\times 10^{7}$
+
+# Es: Porto in notazione scientifica 45.897.241 con l'ordine di grandezza di 135.627
+>>> mz.ns_tex(45897241,135627)
+$458.97\\times 10^{5}$
+```
 	
 `ne_tex(x,dx)` Ritorna una stringa latex bellina con il valore x e l'errore
+Parametri:
+- x: valore della misura
+- dx: errore
+
+```python
+# Es: Porto in notazione scientifica 45.897.241
+>>> import menzalib as mz
+>>> mz.ns_tex(45897241)
+$4.59\\times 10^{7}$
+
+# Es: misuro x=45.897.241 +- 135.627
+>>> mz.ns_tex(45897241,135627)
+$(4.59\\pm0.01)\\times 10^{7}$
+```
 
 `mat_tex(Matrice,titolo=None,file=None)`
 Stampa su terminale una matrice fatta di stringhe per latex
 - Matrice: matrice fatta di stringhe contenente tutti i valori
 - titolo: Opzionale, il titolo della tabella
 - file: Opzionale, file in cui la matrice viene stampata (ATTENZIONE SOVRASCRIVE IL FILE!)
+
+```python
+# Esempio:
+>>> import menzalib as mz
+>>> M=[['guardati','l\'attacco'],
+		['dei','giganti']]
+>>> mz.mat_tex(M)
+
+
+Copia tutto quello che c'è tra le linee
+--------------------------
+\begin{tabular}{cc}
+\hline
+	titolo & a caso\\ 
+\hline
+	guardati & dei \\
+	l'attacco & giganti \\
+\hline
+\end{tabular}
+--------------------------
+
+
+
+```
+
