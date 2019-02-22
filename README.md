@@ -144,11 +144,11 @@ i parametri sono:
 # Es: Porto in notazione scientifica 45.897.241
 >>> import menzalib as mz
 >>> mz.ns_tex(45897241)
-$4.59\\times 10^{7}$
+$4.59\times 10^{7}$
 
 # Es: Porto in notazione scientifica 45.897.241 con l'ordine di grandezza di 135.627
 >>> mz.ns_tex(45897241,135627)
-$458.97\\times 10^{5}$
+$458.97\times 10^{5}$
 ```
 	
 `ne_tex(x,dx)` Ritorna una stringa latex bellina con il valore x e l'errore
@@ -160,11 +160,11 @@ Parametri:
 # Es: Porto in notazione scientifica 45.897.241
 >>> import menzalib as mz
 >>> mz.ns_tex(45897241)
-$4.59\\times 10^{7}$
+$4.59\times 10^{7}$
 
 # Es: misuro x=45.897.241 +- 135.627
 >>> mz.ns_tex(45897241,135627)
-$(4.59\\pm0.01)\\times 10^{7}$
+$(4.59\pm0.01)\times 10^{7}$
 ```
 
 `mat_tex(Matrice,titolo=None,file=None)`
@@ -192,8 +192,17 @@ Copia tutto quello che c'è tra le linee
 \hline
 \end{tabular}
 --------------------------
-
-
-
 ```
+
+L'output diventa
+\\(
+\begin{tabular}{cc}
+\hline
+	titolo & a caso\\ 
+\hline
+	guardati & dei \\
+	l'attacco & giganti \\
+\hline
+\end{tabular}	
+\\)
 
