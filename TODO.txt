@@ -1,3 +1,0 @@
-1) Commentare meglio e fare README sulle funzioni latex
-2) Implementare derivate fatte bene
-3) Testare libreria
