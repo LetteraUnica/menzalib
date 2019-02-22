@@ -144,10 +144,14 @@ i parametri sono:
 # Es: Porto in notazione scientifica 45.897.241
 >>> import menzalib as mz
 >>> mz.ns_tex(45897241)
-$4.59\times 10^{7}$
 
 # Es: Porto in notazione scientifica 45.897.241 con l'ordine di grandezza di 135.627
 >>> mz.ns_tex(45897241,135627)
+```
+Output:
+```latex
+$4.59\times 10^{7}$
+
 $458.97\times 10^{5}$
 ```
 	
@@ -157,13 +161,12 @@ Parametri:
 - dx: errore
 
 ```python
-# Es: Porto in notazione scientifica 45.897.241
->>> import menzalib as mz
->>> mz.ns_tex(45897241)
-$4.59\times 10^{7}$
-
 # Es: misuro x=45.897.241 +- 135.627
->>> mz.ns_tex(45897241,135627)
+>>> import menzalib as mz
+>>> mz.ne_tex(45897241,135627)
+```
+Output:
+```latex
 $(4.59\pm0.01)\times 10^{7}$
 ```
 
@@ -188,8 +191,8 @@ Copia tutto quello che c'è tra le linee
  \hline
 	titolo & a caso\\ 
  \hline
-	guardati & dei \\
-	l'attacco & giganti \\
+	guardati & l'attacco \\
+	dei & giganti \\
  \hline
  \end{tabular}
 --------------------------
