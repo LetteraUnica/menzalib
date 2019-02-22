@@ -179,30 +179,18 @@ Stampa su terminale una matrice fatta di stringhe per latex
 >>> M=[['guardati','l\'attacco'],
 		['dei','giganti']]
 >>> mz.mat_tex(M)
-
-
+```
+Output:
+```latex
 Copia tutto quello che c'è tra le linee
---------------------------
-\begin{tabular}{cc}
-\hline
+ --------------------------
+ \begin{tabular}{cc}
+ \ hline
 	titolo & a caso\\ 
-\hline
+ \hline
 	guardati & dei \\
 	l'attacco & giganti \\
-\hline
-\end{tabular}
+ \hline
+ \end{tabular}
 --------------------------
 ```
-
-L'output diventa
-\(
-\begin{tabular}{cc}
-\hline
-	titolo & a caso\\ 
-\hline
-	guardati & dei \\
-	l'attacco & giganti \\
-\hline
-\end{tabular}	
-\)
-
