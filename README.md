@@ -195,7 +195,7 @@ Copia tutto quello che c'è tra le linee
 ```
 
 L'output diventa
-\\(
+\(
 \begin{tabular}{cc}
 \hline
 	titolo & a caso\\ 
@@ -204,5 +204,5 @@ L'output diventa
 	l'attacco & giganti \\
 \hline
 \end{tabular}	
-\\)
+\)
 
