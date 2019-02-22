@@ -181,7 +181,7 @@ Stampa su terminale una matrice fatta di stringhe per latex
 >>> import menzalib as mz
 >>> M=[['guardati','l\'attacco'],
 		['dei','giganti']]
->>> mz.mat_tex(M)
+>>> mz.mat_tex(M,'titolo & a caso')
 ```
 Output:
 ```latex
