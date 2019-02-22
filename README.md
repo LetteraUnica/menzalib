@@ -185,7 +185,7 @@ Output:
 Copia tutto quello che c'è tra le linee
  --------------------------
  \begin{tabular}{cc}
- \ hline
+ \hline
 	titolo & a caso\\ 
  \hline
 	guardati & dei \\
