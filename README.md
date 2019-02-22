@@ -135,7 +135,7 @@ Calcola il chi2 e il pvalue di un fit con una funzione f(x, ...) con parametri o
 ### FUNZIONI LATEX
 
 `ns_tex(n,nrif)`  
-Funzione della notazione scientifica di un singolo numero con un numero di riferimento nrif scrito il latex.
+Funzione della notazione scientifica di un singolo numero con un numero di riferimento nrif scritto in latex.
 i parametri sono:
 - n: numero da portare in notazione scientifico
 - nrif: Opzionale, serve a dire a che ordine di grandezza deve essere portato il numero, se non specificato assume il valore di n
@@ -155,7 +155,7 @@ $4.59\times 10^{7}$
 $458.97\times 10^{5}$
 ```
 	
-`ne_tex(x,dx)` Ritorna una stringa latex bellina con il valore x e l'errore
+`ne_tex(x,dx)` Ritorna una stringa latex con il valore x e l'errore
 Parametri:
 - x: valore della misura
 - dx: errore
