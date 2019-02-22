@@ -24,7 +24,8 @@ def stringhizza(x):
 """ad esempio se nrif=500 e n=4896 stampa n con l'ordine di grandezza di nrif, cioè ritorna
 	48.96 X 10^2"""
 #Author: Francesco Sacco
-def notazione_scientifica_latex(n,nrif):
+def notazione_scientifica_latex(n,nrif=None):
+	if nrif==None: nrif=n
 	if n==0: return "$0$"
 	if nrif==0: 
 		print('non puoi usare come numero di riferimento zero')
@@ -88,7 +89,7 @@ def mat_tex(Matrice,titolo=None,file=None):
 			stringa=stringa+numero+' & '
 		print(stringa[:-2]+'\\\\',file=f)
 	print('\\hline\n\\end{tabular}',file=f)
-	if file==stdout: print('--------------------------\n\n')
+	if file==None: print('--------------------------\n\n')
    
 
 
