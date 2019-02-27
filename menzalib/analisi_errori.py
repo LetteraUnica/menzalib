@@ -1,9 +1,8 @@
-from numpy import sqrt, vectorize, absolute, log, ones, zeros, array, sum, diag
+from numpy import sqrt, vectorize, absolute, log, ones, zeros, array, sum, diag, reshape, identity, zeros_like
 from numpy.linalg import multi_dot
 from scipy.optimize import curve_fit
-from scipy.misc import derivative
 from scipy.stats import chi2
-
+from numdifftools.nd_algopy import Gradient
 
 # Author: Lorenzo Cavuoti
 def drapp(x, dx, y, dy):
@@ -85,7 +84,7 @@ def dlog(x, dx, base="e"):
     array([0.1, 0.1, 0.1])
 
     Errore su f(x) = log_10(1 +- 0.2)
-    >>> mz.dlog(1, 0.2, 10)
+    >>> mz.dlog(1, 0.2, 10)np.linalg
     0.08685889638065036
     """
 
@@ -101,7 +100,6 @@ def dlog(x, dx, base="e"):
 
 def d_dB(x, dx):
     """
-    d_dB(x, dx)
     Esegue l'errore sulla funzione f(x)=20*log_10(x), utile per fare l'errore sui decibel
     In ordine i parametri sono:
     x, errore_x

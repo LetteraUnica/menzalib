@@ -26,25 +26,27 @@ def curve_fitdx(f, x, y, dx=None, dy=None, p0=None, df=None, nit=10, absolute_si
 
     # Inizializzazione variabili, se la derivata
     # non è data esplicitamente la approssimo con scipy
-    if df is None:
-        if dx is not None:
-            df=Derivative(f)
-        else:
-            df=zeros(len(x))
+    if dy is None :
+        dy = ones(len(y))
 
     if dx is None:
-        dx=zeros(len(x))
-
-    # Eseguo il fit
-    sigma_eff = dy
-    chi, chi_old = 1, -1
-    i=0
-    while (i<10 and (chi-chi_old)/chi > 1e-6):
-        popt, pcov = curve_fit(f, x, y, p0, sigma_eff, absolute_sigma=absolute_sigma)
-        sigma_eff = sqrt(dy**2 + (df(x, *popt)*dx)**2)
-        chi_old = chi
-        chi = sum(((f(x,*popt)-y)/sigma_eff)**2)
-        i += 1
+        popt, pcov = curve_fit(f, x, y, p0, dy, absolute_sigma=absolute_sigma)
+        chi = sum(((f(x,*popt)-y)/dy)**2)
+    
+    else:
+        if df is None:
+            df=Derivative(f)
+        
+        # Eseguo il fit
+        sigma_eff = dy
+        chi, chi_old = 1, -1
+        i=0
+        while (i<10 and (chi-chi_old)/chi > 1e-6):
+            popt, pcov = curve_fit(f, x, y, p0, sigma_eff, absolute_sigma=absolute_sigma)
+            sigma_eff = sqrt(dy**2 + (df(x, *popt)*dx)**2)
+            chi_old = chi
+            chi = sum(((f(x,*popt)-y)/sigma_eff)**2)
+            i += 1
 
     if (chi2pval==False):
         return popt, pcov
