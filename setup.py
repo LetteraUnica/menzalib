@@ -5,9 +5,9 @@ with open("README.md", "r", encoding="latin1") as fh:
 
 setuptools.setup(
     name="menzalib",
-    version="0.6.7",
+    version="0.7.0",
     author="Menzalib Developers",
-    author_email="",
+    author_email=["lorenzocav97@gmail.com", "francesco215@live.it"],
     description="Funzioni utili per lab3",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -20,7 +20,7 @@ setuptools.setup(
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "License ::  MIT License",
         "Operating System :: OS Independent",
     ]
 )

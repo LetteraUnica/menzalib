@@ -1,8 +1,9 @@
-from numpy import sqrt, vectorize, absolute, log, ones, zeros, array, sum, diag, reshape, identity, zeros_like
+from numpy import sqrt, vectorize, absolute, log, ones, zeros, empty, array, sum, diag, reshape, identity, zeros_like, diagflat, transpose
 from numpy.linalg import multi_dot
 from scipy.optimize import curve_fit
 from scipy.stats import chi2
-from numdifftools.nd_algopy import Gradient
+from numdifftools.nd_algopy import Gradient, Derivative
+from inspect import signature
 
 # Author: Lorenzo Cavuoti
 def drapp(x, dx, y, dy):
@@ -55,7 +56,7 @@ def dpoli(x, dx, a, da=0):
 
     Es: Calcolo dell'errore su (1 +- 0.1)^2
 
-    >>> import menzalib as mz
+    >>> import menzalib afrom numdifftools.nd_algopy import Gradient, Derivative mz
     >>> mz.dpoli(1, 0.1, 2)
     array(0.2)
     >>> mz.poli([1,2,3], [0.1, 0.2, 0.3], 4)
@@ -78,7 +79,7 @@ def dlog(x, dx, base="e"):
     Es: Calcolo dell'errore su log(1 +- 0.1)
 
     >>> import menzalib as mz
-    >>> mz.dlog(1, 0.1)
+    >>> mz.dlog(1, 0.1)        'inspect'
     0.1
     >>> mz.dlog([1,2,3], [0.1, 0.2, 0.3])
     array([0.1, 0.1, 0.1])
@@ -117,25 +118,43 @@ def d_dB(x, dx):
     x, dx = array(x), array(dx)
     return absolute(20 * dx/(x*log(10)))
 
-#Author: Francesco Sacco
-def int_rette(popt1,popt2,pcov1,pcov2):
+def jacobiana(f,x):
     """
-    Calcola l'intersezione ed errore tra due rette indipendenti
-	con equazioni y=x*m1+q1 e y=x*m2+q2
-    In ordine i parametri sono:
-    popt1 : Parametri ottimali della prima retta
-    popt2 : Parametri ottimali della seconda retta
-    pcov1 : Matrice di covarianza della prima retta
-    pcov2 : Matrice di covarianza della seconda retta
+
     """
-    q1,q2=popt1[0],popt2[0]     # Forse bisogna invertire 1 con 0?
-    m1,m2=popt1[1],popt2[1]
-    pcov=zeros((4,4))
-    pcov[:2,:2]=pcov1
-    pcov[2:,2:]=pcov2
-    gradientex=([1/(m1-m2),-(q1-q2)/(m1-m2)**2,
-                -1/(m1-m2),(q1-q2)/(m1-m2)**2])
-    x=(q2-q1)/(m1-m2)
-    y=(q2*m1-q1*m2)/(m1-m2)
-    dx=sqrt(multi_dot([gradientex,pcov,gradientex]))
-    return x,y,dx
+    y=array(f(x), dtype=float) #per far diventare tutto un array di numpy
+    x=array(x, dtype=float)
+    if (y.ndim==0) and (x.ndim==0): return Derivative(f)(x) #se f:R->R
+    if (y.ndim==0): return Gradient(f)(x)#se f:Rn->R
+    if (x.ndim==0): J=empty(len(y))  #se f:R->Rn    
+    else: J=empty([len(y),len(x)])   #se f:Rn->Rm inizializzo la jacobiana
+    
+    for riga in range(len(y)):
+        def f_ridotta(x): #restringo f in una sua componente f_ridotta=f[riga]
+            return f(x)[riga]
+        J[riga]=Gradient(f_ridotta)(x) #metto il grandiente nella riga
+    return J
+
+
+def dy(f, x, pcov,jac=None):
+    """
+
+    """
+    x, pcov = array(x, dtype=float), array(pcov, dtype=float) #per far diventare tutto un array di numpy
+    if jac==None: J = jacobiana(f,x) #se la giacobiana non è stata fornita me la calcolo
+    else:
+        # Vedo quanti argomenti ha jac e li immetto come vettore x
+        if (signature(jac).parameters == len(x) and len(x)!=1):
+            def g(x):
+                return jac(*x)
+            dy(f, x, pcov, g)
+        J=jac(x) #prendo la giacobiana calcolata in x
+        
+    if pcov.ndim==0: return sqrt(pcov*multi_dot([J,transpose(J)]))
+    if pcov.ndim==1: pcov=diagflat(pcov) # Creo una matrice diagonale con gli errori
+    if (signature(f).parameters == len(x) and len(x)!=1): # Vedo quanti argomenti ha f e li immetto come vettore x
+        def g(x):
+            return f(*x)
+        dy(g, x, pcov, jac)
+
+    return sqrt(multi_dot([J,pcov,transpose(J)])) # Ritorno la matrice di covarianza

@@ -35,13 +35,14 @@ dRdig=vectorize(errore_res_digitale)
 
 
 # Author: Francesco Sacco
-def errore_osc_volt(V):
+def errore_osc_volt(V,scala=None):
     """
     Calcola l'errore della misura di ddp dell'oscilloscopio
     supponendo che si sia scelta la scala coarse corretta
     i.e. quella dove il segnale si vede meglio senza che questo esca dallo schermo
     La ddp deve essere data in volt
     """
+    if scala!=None: return sqrt((V*0.04)**2+(scala/10)**2)
     scala=sort([2e-3,2e-2,2e-1,2,5e-3,5e-2,5e-1,5,1e-2,1e-1,1])
     for i in scala:
         if V<i*8:
@@ -52,7 +53,7 @@ dVosc=vectorize(errore_osc_volt)
 
 
 #Author:Francesco Sacco
-def errore_osc_tempo(t):
+def errore_osc_tempo(t,scala=None):
     """
     Calcola l'errore della misura di tempo dell'oscilloscopio
     supponendo che si sia scelta la scala corretta.
@@ -60,6 +61,7 @@ def errore_osc_tempo(t):
     Il tempo deve essere dato in secondi
     """
 	## da 5ns a 50s comprendente 1,2.5,5 *10^i
+    if scala!=None: return scala*0.04+t*5e-5+5e-10
     scala=[5e-9]
     for i in range (-8,2):
         scala.append(5*10**(i))
@@ -68,7 +70,7 @@ def errore_osc_tempo(t):
     scala=sort(scala)
     for i in scala:
         if t<10*i:  
-            return i*0.04+t*5e-5+0.6e-9
+            return i*0.04+t*5e-5+5e-9
     print('Tempo troppo lungo, fai prima a misurarlo a mano')
     return
 dtosc=vectorize(errore_osc_tempo)
@@ -89,3 +91,4 @@ def errore_capacita(C,unit='nanofarad'):
     print("Tollerati valori minori di 20 micro farad")
     return
 dCdig=vectorize(errore_capacita)
+
