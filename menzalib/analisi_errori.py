@@ -122,8 +122,7 @@ def d_dB(x, dx):
 def jacobiana(f,x):
     x=array(x, dtype=float)
     if x.ndim!=0 and signature(f).parameters == len(x):
-        def g(x): 
-            return f(*x)
+        def g(x): return f(*x)
         return jacobiana(g,x)
         
     y=array(f(x), dtype=float) #per far diventare tutto un array di numpy
