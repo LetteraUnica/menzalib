@@ -1,4 +1,4 @@
-from numpy import sqrt, vectorize, absolute, log, ones, zeros, empty, array, sum, diag, reshape, identity, zeros_like, diagflat, transpose
+from numpy import sqrt, absolute, log, ones, zeros, empty, array, sum, diag, reshape, identity, zeros_like, diagflat, transpose, dot
 from numpy.linalg import multi_dot
 from scipy.optimize import curve_fit
 from scipy.stats import chi2
@@ -26,7 +26,7 @@ def drapp(x, dx, y, dy):
     y, dy = array(y), array(dy)
     return 1/y**2 * sqrt((y*dx)**2 + (x*dy)**2)
 
-
+#Author Lorenzo Cavuoti
 def dprod(x, dx, y, dy):
     """
     Esegue l'errore sul prodotto di due numeri x*y.
@@ -46,7 +46,7 @@ def dprod(x, dx, y, dy):
     y, dy = array(y), array(dy)
     return sqrt((y*dx)**2 + (x*dy)**2)
 
-
+#Author Lorenzo Cavuoti
 def dpoli(x, dx, a, da=0):
     """
     Esegue l'errore sulla funzione f(x)=x^a
@@ -68,7 +68,7 @@ def dpoli(x, dx, a, da=0):
     a, da = array(a), array(da)
     return absolute(a*x**(a-1)*dx) + absolute(log(x)*x**a*da)
 
-
+#Author Lorenzo Cavuoti
 def dlog(x, dx, base="e"):
     """
     Esegue l'errore sulla funzione f(x)=log(x)
@@ -99,6 +99,7 @@ def dlog(x, dx, base="e"):
             return
         return absolute(dx/(x*log(base)))
 
+#Author Lorenzo Cavuoti
 def d_dB(x, dx):
     """
     Esegue l'errore sulla funzione f(x)=20*log_10(x), utile per fare l'errore sui decibel
@@ -118,12 +119,14 @@ def d_dB(x, dx):
     x, dx = array(x), array(dx)
     return absolute(20 * dx/(x*log(10)))
 
+#Author Francesco Sacco, Lorenzo Cavuoti
 def jacobiana(f,x):
-    """
-
-    """
-    y=array(f(x), dtype=float) #per far diventare tutto un array di numpy
     x=array(x, dtype=float)
+    if x.ndim!=0 and len(signature(f).parameters) == len(x):
+        def g(x): return f(*x)
+        return jacobiana(g,x)
+        
+    y=array(f(x), dtype=float) #per far diventare tutto un array di numpy
     if (y.ndim==0) and (x.ndim==0): return Derivative(f)(x) #se f:R->R
     if (y.ndim==0): return Gradient(f)(x)#se f:Rn->R
     if (x.ndim==0): J=empty(len(y))  #se f:R->Rn    
@@ -135,26 +138,23 @@ def jacobiana(f,x):
         J[riga]=Gradient(f_ridotta)(x) #metto il grandiente nella riga
     return J
 
-
+#Author Lorenzo Cavuoti, Francesco Sacco
 def dy(f, x, pcov,jac=None):
-    """
-
-    """
     x, pcov = array(x, dtype=float), array(pcov, dtype=float) #per far diventare tutto un array di numpy
     if jac==None: J = jacobiana(f,x) #se la giacobiana non è stata fornita me la calcolo
-    else:
-        # Vedo quanti argomenti ha jac e li immetto come vettore x
-        if (signature(jac).parameters == len(x) and len(x)!=1):
-            def g(x):
-                return jac(*x)
-            dy(f, x, pcov, g)
+    else: # Vedo quanti argomenti ha jac e li immetto come vettore x
+        if x.ndim!=0 and len(signature(jac).parameters) == len(x):
+            def g(x): return jac(*x)
+            return dy(f, x, pcov, g)
         J=jac(x) #prendo la giacobiana calcolata in x
-        
-    if pcov.ndim==0: return sqrt(pcov*multi_dot([J,transpose(J)]))
+
+    if pcov.ndim==0: return pcov*J
     if pcov.ndim==1: pcov=diagflat(pcov) # Creo una matrice diagonale con gli errori
-    if (signature(f).parameters == len(x) and len(x)!=1): # Vedo quanti argomenti ha f e li immetto come vettore x
-        def g(x):
-            return f(*x)
-        dy(g, x, pcov, jac)
+    if x.ndim!=0 and len(signature(f).parameters) == len(x): # Vedo quanti argomenti ha f e li immetto come vettore x
+        def g(x): return f(*x)
+        return dy(g, x, pcov, jac)
 
     return sqrt(multi_dot([J,pcov,transpose(J)])) # Ritorno la matrice di covarianza
+
+
+
