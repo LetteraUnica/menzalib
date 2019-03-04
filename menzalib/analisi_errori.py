@@ -1,4 +1,5 @@
-from numpy import sqrt, absolute, log, ones, zeros, empty, array, sum, diag, reshape, identity, zeros_like, diagflat, transpose, dot
+import numpy as np
+from numpy import sqrt, absolute, log, ones, zeros, array, transpose
 from numpy.linalg import multi_dot
 from scipy.optimize import curve_fit
 from scipy.stats import chi2
@@ -129,8 +130,8 @@ def jacobiana(f,x):
     y=array(f(x), dtype=float) #per far diventare tutto un array di numpy
     if (y.ndim==0) and (x.ndim==0): return Derivative(f)(x) #se f:R->R
     if (y.ndim==0): return Gradient(f)(x)#se f:Rn->R
-    if (x.ndim==0): J=empty(len(y))  #se f:R->Rn    
-    else: J=empty([len(y),len(x)])   #se f:Rn->Rm inizializzo la jacobiana
+    if (x.ndim==0): J=np.empty(len(y))  #se f:R->Rn    
+    else: J=np.empty([len(y),len(x)])   #se f:Rn->Rm inizializzo la jacobiana
     
     for riga in range(len(y)):
         def f_ridotta(x): #restringo f in una sua componente f_ridotta=f[riga]
@@ -149,12 +150,9 @@ def dy(f, x, pcov,jac=None):
         J=jac(x) #prendo la giacobiana calcolata in x
 
     if pcov.ndim==0: return pcov*J
-    if pcov.ndim==1: pcov=diagflat(pcov) # Creo una matrice diagonale con gli errori
+    if pcov.ndim==1: pcov=np.diagflat(pcov) # Creo una matrice diagonale con gli errori
     if x.ndim!=0 and len(signature(f).parameters) == len(x): # Vedo quanti argomenti ha f e li immetto come vettore x
         def g(x): return f(*x)
         return dy(g, x, pcov, jac)
 
     return sqrt(multi_dot([J,pcov,transpose(J)])) # Ritorno la matrice di covarianza
-
-
-

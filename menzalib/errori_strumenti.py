@@ -75,6 +75,25 @@ def errore_osc_tempo(t,scala=None):
     return
 dtosc=vectorize(errore_osc_tempo)
 
+
+def errore_osc_frequenza(f, scala=None, misura="cursore"):
+    """
+    Calcola l'errore della misura di frequenza dell'oscilloscopio
+    supponendo che si sia scelta la scala corretta.
+    i.e. quella dove il segnale si vede meglio senza che questo esca dallo schermo
+    La frequenza deve essere data in Hertz.
+    Il parametro opzionale scala serve per scegliere la scala se questa è diversa da
+    quella assunta dalla funzione
+    Se il parametro opzionale misura è diverso da "cursore" l'errore in frequenza
+    viene dato dal trigger dell'oscilloscopio (molto preciso ma meno robusto)
+    """
+    if misura != "cursore" :
+        return f*52*10**-6
+    dt = errore_osc_tempo(1/f, scala=scala)
+    return f**2 * dt
+dfosc = vectorize(errore_osc_frequenza)
+
+
 # Author: Francesco Sacco
 def errore_capacita(C,unit='nanofarad'):
     """
