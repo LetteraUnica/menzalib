@@ -150,9 +150,11 @@ def dy(f, x, pcov,jac=None):
         J=jac(x) #prendo la giacobiana calcolata in x
 
     if pcov.ndim==0: return pcov*J
-    if pcov.ndim==1: pcov=np.diagflat(pcov) # Creo una matrice diagonale con gli errori
+    if pcov.ndim==1: 
+        for i in range(len(pcov)): pcov[i]=pcov[i]**2 #passo da deviazione standar a varianza 
+        pcov=np.diagflat(pcov) # Creo una matrice diagonale con gli errori
     if x.ndim!=0 and len(signature(f).parameters) == len(x): # Vedo quanti argomenti ha f e li immetto come vettore x
         def g(x): return f(*x)
         return dy(g, x, pcov, jac)
 
-    return sqrt(multi_dot([J,pcov,transpose(J)])) # Ritorno la matrice di covarianza
+    return multi_dot([J,pcov,transpose(J)]) # Ritorno la matrice di covarianza
