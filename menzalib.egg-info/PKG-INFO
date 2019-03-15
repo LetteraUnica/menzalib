@@ -1,10 +1,10 @@
 Metadata-Version: 2.1
 Name: menzalib
-Version: 0.6.7
+Version: 0.7.5
 Summary: Funzioni utili per lab3
 Home-page: https://bitbucket.org/Lettera/menza-lib/src
 Author: Menzalib Developers
-Author-email: 
+Author-email: ['lorenzocav97@gmail.com', 'francesco215@live.it']
 License: UNKNOWN
 Description: # Come installare:
         
@@ -207,6 +207,6 @@ Description: # Come installare:
         ```
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
-Classifier: License :: OSI Approved :: MIT License
+Classifier: License ::  MIT License
 Classifier: Operating System :: OS Independent
 Description-Content-Type: text/markdown
