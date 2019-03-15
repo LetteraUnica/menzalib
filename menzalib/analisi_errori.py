@@ -95,7 +95,7 @@ def dlog(x, dx, base="e"):
         return absolute(dx/x)
     else:
         base = array(base)
-        if (all(base<=0)):
+        if (np.all(base<=0)):
             print("Errore: Base del logaritmo negativa!")
             return
         return absolute(dx/(x*log(base)))
@@ -122,7 +122,20 @@ def d_dB(x, dx):
 
 #Author Francesco Sacco, Lorenzo Cavuoti
 def jacobiana(f,x):
+    """
+    Calcola la jacobiana(J) di una funzione f in un punto x.
+    Ovvero la matrice delle derivate prime in x di f: R^n->R^m
+    Parametri:
+    f(x, y, ...): funzione multidimensionale di cui fare la jacobiana
+    x: tupla, array o numpy array che indica il punto in cui calcolare la jacobiana
+
+    Casi particolari:
+    Indico con J(x) la jacobiana di f in x
+    Se f: R->R ==> J(x)=f'(x)
+    Se f: R^n->R ==> J(x)=gradiente(f)(x)
+    """
     x=array(x, dtype=float)
+    # Nel caso uno scriva f(x,y, ...) invece di f(x) con x vettore
     if x.ndim!=0 and len(signature(f).parameters) == len(x):
         def g(x): return f(*x)
         return jacobiana(g,x)
@@ -141,15 +154,43 @@ def jacobiana(f,x):
 
 #Author Lorenzo Cavuoti, Francesco Sacco
 def dy(f, x, pcov,jac=None):
+    """
+    Data una variabile aleatoria x, calcola matrice di covarianza della variabile aleatoria y=f(x).
+    Parametri:
+    f(x, y, ...): funzione R^n->R^m che restituisce y=f(x)
+    x: tupla, array o numpy array che indica il punto in cui calcolare la matrice di covarianza
+    pcov: Matrice di covarianza della variabile aleatoria x, se viene dato un vettore v
+        costruiamo la matrice di covarianza con la diagonale uguale a v, diag(pcov)=v
+    jac, Opzionale: funzione che restituisce la matrice jacobiana della funzione f in un punto x,
+        se non data la jacobiana è approssimata numericamente
+
+    Es: Calcolo dell'errore su y=f(x)=x/(1+x**2) in x=2 +- 0.1
+    In questo caso la matrice di covarianza (cov) è uno scalare tale che cov==dx**2
+    dove == indica una definizione e dx indica l'errore sulla x, quindi:
+    >>> import menzalib as mz
+    >>> def f(x):
+            return x/(1+x**2)
+    >>> mz.dy(f, 2, 0.1**2)
+    0.0012000000000000005
+    >>> def df(x):  # Derivata di f esplicita
+            return (1-x**2)/(1+x**2)**2
+    >>> mz.dy(f, 2, 0.1**2) - 0.1*df(2)
+
+
+    Casi particolari:
+    Indico con J(x) la jacobiana di f in x
+    Se f: R->R ==> J(x)=f'(x)
+    Se f: R^n->R ==> J(x)=gradiente(f)(x)
+    """
     x, pcov = array(x, dtype=float), array(pcov, dtype=float) #per far diventare tutto un array di numpy
-    if jac==None: J = jacobiana(f,x) #se la giacobiana non è stata fornita me la calcolo
+    if jac==None: J = jacobiana(f,x) #se la jacobiana non è stata fornita me la calcolo
     else: # Vedo quanti argomenti ha jac e li immetto come vettore x
         if x.ndim!=0 and len(signature(jac).parameters) == len(x):
             def g(x): return jac(*x)
             return dy(f, x, pcov, g)
-        J=jac(x) #prendo la giacobiana calcolata in x
+        J=jac(x) #prendo la jacobiana calcolata in x
 
-    if pcov.ndim==0: return pcov*J
+    if pcov.ndim==0: return np.sqrt(pcov)*np.abs(J)
     if pcov.ndim==1: pcov=np.diagflat(pcov) # Creo una matrice diagonale con gli errori
     if x.ndim!=0 and len(signature(f).parameters) == len(x): # Vedo quanti argomenti ha f e li immetto come vettore x
         def g(x): return f(*x)
