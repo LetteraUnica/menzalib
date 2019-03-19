@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="latin1") as fh:
 
 setuptools.setup(
     name="menzalib",
-    version="0.7.5",
+    version="0.7.6",
     author="Menzalib Developers",
     author_email=["lorenzocav97@gmail.com", "francesco215@live.it"],
     description="Funzioni utili per lab3",
