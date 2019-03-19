@@ -144,10 +144,12 @@ def dy(f, x, pcov,jac=None):
     x, pcov = array(x, dtype=float), array(pcov, dtype=float) #per far diventare tutto un array di numpy
     if jac==None: J = jacobiana(f,x) #se la giacobiana non è stata fornita me la calcolo
     else: # Vedo quanti argomenti ha jac e li immetto come vettore x
-        if x.ndim!=0 and len(signature(jac).parameters) == len(x):
-            def g(x): return jac(*x)
-            return dy(f, x, pcov, g)
-        J=jac(x) #prendo la giacobiana calcolata in x
+        if callable(jac)==False: J=array(jac,dtype=float)#nel caso la giacobiana è una matrice
+        else:#nel caso in cui la giacobiana è una funzione
+            if callable(jac)==True x.ndim!=0 and len(signature(jac).parameters) == len(x):
+                def g(x): return jac(*x)
+                return dy(f, x, pcov, g)
+            J=jac(x) #prendo la giacobiana calcolata in x
 
     if pcov.ndim==0: return pcov*J
     if pcov.ndim==1: 
