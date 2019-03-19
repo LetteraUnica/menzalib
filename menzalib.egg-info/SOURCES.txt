@@ -1,6 +1,5 @@
 README.md
 setup.py
-menzalib/WIP_sacco.py
 menzalib/__init__.py
 menzalib/analisi_errori.py
 menzalib/errori_strumenti.py
