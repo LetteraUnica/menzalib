@@ -123,12 +123,27 @@ def d_dB(x, dx):
 #Author Francesco Sacco, Lorenzo Cavuoti
 def jacobiana(f,x):
     """
-    Calcola la jacobiana(J) di una funzione f in un punto x.
-    Ovvero la matrice delle derivate prime in x di f: R^n->R^m
+    Calcola la jacobiana di una funzione f in un punto x.
+    Ovvero la matrice delle derivate prime di f: R^n->R^m in x
     Parametri:
     f(x, y, ...): funzione multidimensionale di cui fare la jacobiana
     x: tupla, array o numpy array che indica il punto in cui calcolare la jacobiana
 
+    Es: Calcolare la jacobiana di f(x)=exp(x) in x=2
+    >>> import numpy as np
+    >>> import menzalib as mz
+    >>> def f(x):
+    ...     return np.exp(np.sin(x)) 
+    >>> mz.jacobiana(f,2)
+    7.38905609893065
+
+    Es: Calcolo della jacobiana di g(x,y)=[sin(x)*cos(y), y*exp(x)] in (x, y) = (1, 3)
+    >>> def g(x,y):
+    ...     return [np.sin(x)*np.cos(y), y*np.exp(x)]
+    >>> mz.jacobiana(g, [1,3])
+    array([[-0.53489523, -0.11874839],
+        [ 8.15484549,  2.71828183]])
+    
     Casi particolari:
     Indico con J(x) la jacobiana di f in x
     Se f: R->R ==> J(x)=f'(x)
@@ -160,7 +175,7 @@ def dy(f, x, pcov,jac=None):
     f(x, y, ...): funzione R^n->R^m che restituisce y=f(x)
     x: tupla, array o numpy array che indica il punto in cui calcolare la matrice di covarianza
     pcov: Matrice di covarianza della variabile aleatoria x, se viene dato un vettore v
-        costruiamo la matrice di covarianza con la diagonale uguale a v, diag(pcov)=v
+        la matrice di covarianza  diagonale con la diagonale uguale a v, diag(pcov)=v
     jac, Opzionale: funzione che restituisce la matrice jacobiana della funzione f in un punto x,
         se non data la jacobiana è approssimata numericamente
 
@@ -171,10 +186,10 @@ def dy(f, x, pcov,jac=None):
     >>> def f(x):
             return x/(1+x**2)
     >>> mz.dy(f, 2, 0.1**2)
-    0.0012000000000000005
-    >>> def df(x):  # Derivata di f esplicita
-            return (1-x**2)/(1+x**2)**2
-    >>> mz.dy(f, 2, 0.1**2) - 0.1*df(2)
+   	0.012000000000000004
+   	
+   	Calcolo dell'errore su 
+    
 
 
     Casi particolari:
@@ -185,15 +200,19 @@ def dy(f, x, pcov,jac=None):
     x, pcov = array(x, dtype=float), array(pcov, dtype=float) #per far diventare tutto un array di numpy
     if jac==None: J = jacobiana(f,x) #se la jacobiana non è stata fornita me la calcolo
     else: # Vedo quanti argomenti ha jac e li immetto come vettore x
-        if x.ndim!=0 and len(signature(jac).parameters) == len(x):
-            def g(x): return jac(*x)
-            return dy(f, x, pcov, g)
-        J=jac(x) #prendo la jacobiana calcolata in x
+        if callable(jac)==False: J=array(jac,dtype=float)#nel caso la giacobiana è una matrice
+        else:#nel caso in cui la giacobiana è una funzione
+            if (callable(jac)==True and x.ndim!=0 and len(signature(jac).parameters) == len(x)):
+                def g(x): return jac(*x)
+                return dy(f, x, pcov, g)
+            J=jac(x) #prendo la giacobiana calcolata in x
+    if pcov.ndim==0: return pcov*J
+    if pcov.ndim==1: 
+        pcov==pcov**2 #passo da deviazione standar a varianza 
+        pcov=np.diagflat(pcov) # Creo una matrice diagonale con gli errori
 
-    if pcov.ndim==0: return np.sqrt(pcov)*np.abs(J)
-    if pcov.ndim==1: pcov=np.diagflat(pcov) # Creo una matrice diagonale con gli errori
     if x.ndim!=0 and len(signature(f).parameters) == len(x): # Vedo quanti argomenti ha f e li immetto come vettore x
         def g(x): return f(*x)
         return dy(g, x, pcov, jac)
 
-    return sqrt(multi_dot([J,pcov,transpose(J)])) # Ritorno la matrice di covarianza
+    return multi_dot([J,pcov,transpose(J)]) # Ritorno la matrice di covarianza

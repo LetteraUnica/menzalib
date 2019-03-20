@@ -53,7 +53,7 @@ def curve_fitdx(f, x, y, dx=None, dy=None, p0=None, df=None, nit=10, absolute_si
         return popt, pcov
     else:
         dpopt = sqrt(np.diag(pcov))
-        pvalue = chi2.cdf(chi,len(x))
+        pvalue = chi2.cdf(chi,len(x)-len(popt))
         return popt, pcov, dpopt, chi, pvalue
 
 
@@ -75,5 +75,5 @@ def chi2_pval(f,x,y,dy,popt,dx=None,df=None):
         df=Derivative(f)
     if dx is not None: dy=sqrt(dy**2 + (df(x, *popt)*dx)**2)
     chi = np.sum(((f(x,*popt)-y)/dy)**2)
-    pvalue=chi2.cdf(chi,len(x))
+    pvalue=chi2.cdf(chi,len(x)-len(popt))
     return chi, pvalue

@@ -202,7 +202,7 @@ def dy(f, x, pcov,jac=None):
     else: # Vedo quanti argomenti ha jac e li immetto come vettore x
         if callable(jac)==False: J=array(jac,dtype=float)#nel caso la giacobiana è una matrice
         else:#nel caso in cui la giacobiana è una funzione
-            if callable(jac)==True x.ndim!=0 and len(signature(jac).parameters) == len(x):
+            if (callable(jac)==True and x.ndim!=0 and len(signature(jac).parameters) == len(x)):
                 def g(x): return jac(*x)
                 return dy(f, x, pcov, g)
             J=jac(x) #prendo la giacobiana calcolata in x
