@@ -25,6 +25,7 @@ def stringhizza(x):
 	48.96 X 10^2"""
 #Author: Francesco Sacco
 def notazione_scientifica_latex(n,nrif=None):
+	n, nrif=array(n), array(nrif)
 	if nrif==None: nrif=n
 	if n==0: return "$0$"
 	if nrif==0: 
