@@ -24,7 +24,7 @@ def stringhizza(x):
 """ad esempio se nrif=500 e n=4896 stampa n con l'ordine di grandezza di nrif, cioè ritorna
 	48.96 X 10^2"""
 #Author: Francesco Sacco
-def notazione_scientifica_latex(n,nrif=None):
+def notazione_scientifica_latex(n,nrif=None,nult=None):
 	if n==0: return "$0$"
 	if nrif==None:nrif=n
 	if nult==None:
@@ -44,6 +44,13 @@ def notazione_scientifica_latex(n,nrif=None):
 #vettorizzo
 ns_tex=vectorize(notazione_scientifica_latex)
 
+
+#ritorna due stringe, una col valore e l'altro con l'errore fatte in modo che abbiano
+#lo stesso ordine di grandezza
+#Author:Francesco Sacco
+def nes_tex(x,dx=None):
+	if dx==None: return ns_tex(x)
+	return ns_tex(x,nult=dx), ns_tex(dx,x)
 
 
 #funzione della notazione scientifica di un valore x con errore
@@ -68,7 +75,6 @@ def numero_con_errore_latex(x,dx):
 	return  "$("+str(x)+"\\pm"+stringhizza(dx)+")\\times 10^{"+str(exp)+"}$"
 #vettorizzo la funzione
 ne_tex=vectorize(numero_con_errore_latex)
-
 
 
 #Funzione che stampa una matrice fatta di stringhe in un formato comodo per latex
