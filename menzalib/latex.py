@@ -25,18 +25,22 @@ def stringhizza(x):
 	48.96 X 10^2"""
 #Author: Francesco Sacco
 def notazione_scientifica_latex(n,nrif=None):
-	n, nrif=array(n), array(nrif)
-	if nrif==None: nrif=n
 	if n==0: return "$0$"
-	if nrif==0: 
-		print('non puoi usare come numero di riferimento zero')
-		return notazione_scientifica_latex(n,n)
-	exp=int(floor(log10(absolute(nrif))))#guardo l'ordine di grandezza di nrif
-	if absolute(exp)==1: exp=0 #nel caso l'esponente è uno o meno uno non uso la n.s.
-	n=n/10**exp #porto n nell'ordine di grandezza di nrif
-	n=round(n,2)#arrotondo alla seconda cifra dopo la virgola
-	if exp==0: return "$"+str(n)+"$"
-	return "$"+str(n)+"\\times 10^{"+str(exp)+"}$" #ritorna la stringa in latex
+	if nrif==None:nrif=n
+	if nult==None:
+		if nrif==n: nult=n/100 #ns_tex(456,456)=4.56 x 10^2
+		if nrif>n: nult=n    #ns_tex(6,572)=0.06 x 10^2
+		if nrif<n: nult=nrif #ns_tex(572,6)=572
+	if nrif==0 or nult==0: 
+		print('non puoi usare come numero di riferimento o numero dell\'ultima cifra lo zero')
+		#return notazione_scientifica_latex(n,n)
+	er=int(floor(log10(absolute(nrif))))#guardo l'ordine di grandezza di nrif
+	#if absolute(er)==1: er=0 #nel caso l'esponente è uno o meno uno non uso la n.s.
+	n,nult=n/10**er,nult/10**er #porto n nell'ordine di grandezza di nrif
+	eu=int(floor(log10(absolute(nult))))#guardo l'ordine di grandezza di nult
+	n=round(n,-eu)#arrotondo alla seconda cifra dopo la virgola
+	if er==0: return "$"+str(n)+"$"
+	return "$"+stringhizza(n)+"\\times 10^{"+str(er)+"}$" #ritorna la stringa in latex
 #vettorizzo
 ns_tex=vectorize(notazione_scientifica_latex)
 
