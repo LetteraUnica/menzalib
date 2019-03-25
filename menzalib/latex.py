@@ -75,8 +75,8 @@ def numero_con_errore_latex(x,dx):
 	dx=round(dx,absolute(cifr)) #taglio le cifre significative di dx dopo la prima
 	#ritorno la stringa in latex
 	if exp==0:
-		return  "$"+str(x)+"\\pm"+stringhizza(dx)+"$" 
-	return  "$("+str(x)+"\\pm"+stringhizza(dx)+")\\times 10^{"+str(exp)+"}$"
+		return  "$"+str(x)+"$ $\\pm$ $"+stringhizza(dx)+"$" 
+	return  "$("+str(x)+"$ $\\pm$ $"+stringhizza(dx)+")\\times 10^{"+str(exp)+"}$"
 #vettorizzo la funzione
 ne_tex=vectorize(numero_con_errore_latex)
 
