@@ -12,3 +12,6 @@ Una funzione che esegue il `curve_fit` considerando anche gli errori sulla x e u
 Infine funzioni che permettono stampare una tabella in LaTeX senza dover riscrivere tutti i dati tra $ ed & [**Funzioni LaTeX**](https://github.com/LetteraUnica/menzalib/wiki/Funzioni-per-latex).
 
 Per imparare come funziona la libreria andare sulla [**Wiki**](https://github.com/LetteraUnica/menzalib/wiki)
+
+### Installazione
+scrivere su terminale `pip install menzalib`
