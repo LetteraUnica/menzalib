@@ -25,13 +25,13 @@ def stringhizza(x):
 	48.96 X 10^2"""
 #Author: Francesco Sacco
 def notazione_scientifica_latex(n,nrif=None,nult=None):
-    if n==0: return "$0$"
+    if n==0.0: return "$0$"
     if nrif==None:nrif=n
     if nult==None:
         if nrif==n: nult=n/100 #ns_tex(456,456)=4.56 x 10^2
         if nrif>n: nult=n    #ns_tex(6,572)=0.06 x 10^2
         if nrif<n: nult=nrif #ns_tex(572,6)=572
-    if nrif==0 or nult==0: 
+    if nrif==0.0 or nult==0.0: 
         print('non puoi usare come numero di riferimento o numero dell\'ultima cifra lo zero')
         return notazione_scientifica_latex(n)
     er=int(floor(log10(absolute(nrif))))#guardo l'ordine di grandezza di nrif
@@ -63,8 +63,8 @@ def nes_tex(x,dx=None):
 #Author: Francesco Sacco
 def numero_con_errore_latex(x,dx):
 	if dx==0.0 and x==0.0: return "$0\\pm 0"
-	if x==0.0: return "$0\\pm "+notazione_scientifica_latex(dx,dx)[1:]
-	if dx==0.0: return notazione_scientifica_latex(x,x)[:-1]+"\\pm 0$"
+	if x==0.0: return "$0\\pm "+notazione_scientifica_latex(dx,nult=dx)[1:]
+	if dx==0.0: return notazione_scientifica_latex(x,nult=x*1e-6)[:-1]+"\\pm 0$"
 	exp=int(floor(log10(absolute(x))))#guardo l'ordine di grandezza di x
 	if absolute(exp)==1: exp=0 #nel caso l'esponente è uno o meno uno non uso la n.s.
 	x=x/10**exp     #porto la virgola dopo la prima cifra
