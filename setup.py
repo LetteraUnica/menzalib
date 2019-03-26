@@ -11,7 +11,7 @@ setuptools.setup(
     description="Funzioni utili per lab3",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://bitbucket.org/Lettera/menza-lib/src",
+    url="https://github.com/LetteraUnica/menzalib",
     packages=setuptools.find_packages(),
     install_requires=[
         'numpy',
