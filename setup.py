@@ -7,7 +7,7 @@ setuptools.setup(
     name="menzalib",
     version="0.8.5",
     author=["Lorenzo Cavuoti", "Francesco Sacco"],
-    author_email=["lorenzocav97@gmail.com", "francesco215@live.it"],
+    author_email="lorenzocav97@gmail.com",
     description="Funzioni utili per lab3",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -20,7 +20,6 @@ setuptools.setup(
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License ::  MIT License",
         "Operating System :: OS Independent",
     ]
 )
