@@ -208,7 +208,7 @@ def dy(f, x, pcov,jac=None):
             J=jac(x) #prendo la giacobiana calcolata in x
     if pcov.ndim==0: return pcov*J
     if pcov.ndim==1: 
-        pcov==pcov**2 #passo da deviazione standar a varianza 
+        pcov=pcov**2 #passo da deviazione standar a varianza 
         pcov=np.diagflat(pcov) # Creo una matrice diagonale con gli errori
 
     if x.ndim!=0 and len(signature(f).parameters) == len(x): # Vedo quanti argomenti ha f e li immetto come vettore x
