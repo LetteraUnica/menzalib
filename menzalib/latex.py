@@ -39,7 +39,8 @@ def principale(n,nrif=None,nult=None):
         print('non puoi usare un numero per l\'ultima cifra maggiore di quello di riferimento')
         return principale(n)
     n=round(n,-eu)#arrotondo alla seconda cifra dopo la virgola
-    return [str(n),er] #se 3.645*10^-23 si ha che str(n)="3.645" e er=-23
+    if eu==0: n=int(n) #se il numero è tipo 31.0 lo faccia divientare 31
+    return [stringhizza(n),er] #se 3.645*10^-23 si ha che str(n)="3.645" e er=-23
 
 
 #funzione della notazione scientifica di un singolo numero con un numero di riferimento nrif
