@@ -32,14 +32,16 @@ def principale(n,nrif=None,nult=None):
         print('non puoi usare come numero di riferimento o numero dell\'ultima cifra lo zero')
         return principale(n)
     er=int(floor(log10(absolute(nrif))))#guardo l'ordine di grandezza di nrif
-    #if absolute(er)==1: er=0 #nel caso l'esponente è uno o meno uno non uso la n.s.
-    n,nult=n/10**er,nult/10**er #porto n nell'ordine di grandezza di nrif
+    #porto n nell'ordine di grandezza di nrif nel caso in cui l'esponente è 1 o -1 non uso la n.s.
+    if absolute(er)!=1: n,nult=n/10**er,nult/10**er 
     eu=int(floor(log10(absolute(nult))))#guardo l'ordine di grandezza di nult
-    if eu>0:
+    print(eu)
+    if eu>0 and er!=1:
         print('non puoi usare un numero per l\'ultima cifra maggiore di quello di riferimento')
         return principale(n)
     n=round(n,-eu)#arrotondo alla seconda cifra dopo la virgola
-    if eu==0: n=int(n) #se il numero è tipo 31.0 lo faccia divientare 31
+    if eu>=0: n=int(n)
+    if absolute(er)==1:return [stringhizza(n),0]
     return [stringhizza(n),er] #se 3.645*10^-23 si ha che str(n)="3.645" e er=-23
 
 
