@@ -149,13 +149,13 @@ def jacobiana(f,x):
     Se f: R->R ==> J(x)=f'(x)
     Se f: R^n->R ==> J(x)=gradiente(f)(x)
     """
-    x=array(x, dtype=float)
+    x=array(x, dtype=np.double)
     # Nel caso uno scriva f(x,y, ...) invece di f(x) con x vettore
     if x.ndim!=0 and len(signature(f).parameters) == len(x):
         def g(x): return f(*x)
         return jacobiana(g,x)
         
-    y=array(f(x), dtype=float) #per far diventare tutto un array di numpy
+    y=array(f(x), dtype=np.double) #per far diventare tutto un array di numpy
     if (y.ndim==0) and (x.ndim==0): return Derivative(f)(x) #se f:R->R
     if (y.ndim==0): return Gradient(f)(x)#se f:Rn->R
     if (x.ndim==0): J=np.empty(len(y))  #se f:R->Rn    
@@ -197,10 +197,10 @@ def dy(f, x, pcov,jac=None):
     Se f: R->R ==> J(x)=f'(x)
     Se f: R^n->R ==> J(x)=gradiente(f)(x)
     """
-    x, pcov = array(x, dtype=float), array(pcov, dtype=float) #per far diventare tutto un array di numpy
+    x, pcov = array(x, dtype=np.double), array(pcov, dtype=np.double) #per far diventare tutto un array di numpy
     if jac==None: J = jacobiana(f,x) #se la jacobiana non è stata fornita me la calcolo
     else: # Vedo quanti argomenti ha jac e li immetto come vettore x
-        if callable(jac)==False: J=array(jac,dtype=float)#nel caso la giacobiana è una matrice
+        if callable(jac)==False: J=array(jac,dtype=np.double)#nel caso la giacobiana è una matrice
         else:#nel caso in cui la giacobiana è una funzione
             if (callable(jac)==True and x.ndim!=0 and len(signature(jac).parameters) == len(x)):
                 def g(x): return jac(*x)
@@ -208,11 +208,14 @@ def dy(f, x, pcov,jac=None):
             J=jac(x) #prendo la giacobiana calcolata in x
     if pcov.ndim==0: return pcov*J
     if pcov.ndim==1: 
-        pcov==pcov**2 #passo da deviazione standar a varianza 
+        pcov=pcov**2 #passo da deviazione standar a varianza 
         pcov=np.diagflat(pcov) # Creo una matrice diagonale con gli errori
 
     if x.ndim!=0 and len(signature(f).parameters) == len(x): # Vedo quanti argomenti ha f e li immetto come vettore x
         def g(x): return f(*x)
         return dy(g, x, pcov, jac)
-
-    return multi_dot([J,pcov,transpose(J)]) # Ritorno la matrice di covarianza
+    
+    # Ritorno la matrice di covarianza
+    cov_y = multi_dot([J,pcov,transpose(J)])
+    if (cov_y.size == 1): return sqrt(cov_y.flatten())[0] # Ritorna l'errore se la funzione va da R^n -> R
+    return cov_y
