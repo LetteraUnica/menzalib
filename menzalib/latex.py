@@ -9,40 +9,41 @@ Forse.
 """
 #Author:Francesco Sacco
 def stringhizza(x):
-    s=str(x)
-    e=s.find("e")#trovo quella e di merda
-    if e==-1:#se non c'è è tutto bello così
-        return s
-    exp=int(s[e+2:])#altrimenti prendo l'esponente
-    dot=s.find(".")#e vedo dov'è il punto
-    if dot!=-1:#se c'è il punto
-        s=s[:dot]+s[dot+1:]#lo levo dalla stringa
-        return "0."+"0"*(exp-dot)+s[:e]# e ritorno il numero per bene
-    return "0."+"0"*(exp-1)+s[:e]#altrimenti torno questo
+	s=str(x)
+	e=s.find("e")#trovo quella e di merda
+	if e==-1:#se non c'è è tutto bello così
+		return s
+	exp=int(s[e+2:])#altrimenti prendo l'esponente
+	dot=s.find(".")#e vedo dov'è il punto
+	if dot!=-1:#se c'è il punto
+		s=s[:dot]+s[dot+1:]#lo levo dalla stringa
+		return "0."+"0"*(exp-dot)+s[:e]# e ritorno il numero per bene
+	return "0."+"0"*(exp-1)+s[:e]#altrimenti torno questo
 
-
+#funzione di supporto,
+#Author:Francesco Sacco
 def principale(n,nrif=None,nult=None):
-    if n==0.0: return ["0",0]
-    if nrif==None:nrif=n
-    if nult==None:
-        if nrif==n: nult=n/100 #ns_tex(456,456)=4.56 x 10^2
-        if nrif>n: nult=n    #ns_tex(6,572)=0.06 x 10^2
-        if nrif<n: nult=nrif #ns_tex(572,6)=572
-    if nrif==0.0 or nult==0.0: 
-        print('non puoi usare come numero di riferimento o numero dell\'ultima cifra lo zero')
-        return principale(n)
-    er=int(floor(log10(absolute(nrif))))#guardo l'ordine di grandezza di nrif
-    #porto n nell'ordine di grandezza di nrif nel caso in cui l'esponente è 1 o -1 non uso la n.s.
-    if absolute(er)!=1: n,nult=n/10**er,nult/10**er 
-    eu=int(floor(log10(absolute(nult))))#guardo l'ordine di grandezza di nult
-    print(eu)
-    if eu>0 and er!=1:
-        print('non puoi usare un numero per l\'ultima cifra maggiore di quello di riferimento')
-        return principale(n)
-    n=round(n,-eu)#arrotondo alla seconda cifra dopo la virgola
-    if eu>=0: n=int(n)
-    if absolute(er)==1:return [stringhizza(n),0]
-    return [stringhizza(n),er] #se 3.645*10^-23 si ha che str(n)="3.645" e er=-23
+	if n==0: return ["0",0]
+	if nrif==None:nrif=n
+	if nult==None:
+		if absolute(nrif)==absolute(n): nult=n/100 #ns_tex(456,456)=4.56 x 10^2
+		if absolute(nrif)>absolute(n): nult=n    #ns_tex(6,572)=0.06 x 10^2
+		if absolute(nrif)<absolute(n): nult=nrif #ns_tex(572,6)=572
+	if nrif==0.0 or nult==0.0: 
+		print('non puoi usare come numero di riferimento o numero dell\'ultima cifra lo zero')
+		return principale(n)
+	er=int(floor(log10(absolute(nrif))))#guardo l'ordine di grandezza di nrif
+	#porto n nell'ordine di grandezza di nrif nel caso in cui l'esponente è 1 o -1 non uso la n.s.
+	if absolute(er)!=1: n,nult=n/10**er,nult/10**er 
+	eu=int(floor(log10(absolute(nult))))#guardo l'ordine di grandezza di nult
+	if eu>0 and er!=1:
+		print('non puoi usare un numero per l\'ultima cifra maggiore di quello di riferimento')
+		return principale(n)
+	n=round(n,-eu)#arrotondo all'ordine di grandezza di eu
+	if eu>=0: n=int(n)
+	if absolute(er)==1:return [stringhizza(n),0]
+	return [stringhizza(n),er] #se 3.645*10^-23 si ha che str(n)="3.645" e er=-23
+	return [stringhizza(n),er] #se 3.645*10^-23 si ha che str(n)="3.645" e er=-23
 
 
 #funzione della notazione scientifica di un singolo numero con un numero di riferimento nrif
@@ -50,9 +51,9 @@ def principale(n,nrif=None,nult=None):
 	48.96 X 10^2"""
 #Author: Francesco Sacco
 def notazione_scientifica_latex(n,nrif=None,nult=None):
-    n,exp=principale(n,nrif,nult)
-    if exp==0: return "$"+n+"$"
-    return "$"+n+"\\times 10^{"+str(exp)+"}$"
+	n,exp=principale(n,nrif,nult)
+	if exp==0: return "$"+n+"$"
+	return "$"+n+" \\times 10^{"+str(exp)+"}$"
 #vettorizzo
 ns_tex=vectorize(notazione_scientifica_latex)
 
@@ -61,8 +62,8 @@ ns_tex=vectorize(notazione_scientifica_latex)
 #lo stesso ordine di grandezza
 #Author:Francesco Sacco
 def nes_tex(x,dx=None):
-    if dx==None: return ns_tex(x)
-    return ns_tex(x,nult=dx), ns_tex(dx,x)
+	if dx==None: return ns_tex(x)
+	return ns_tex(x,nult=dx), ns_tex(dx,x)
 
 
 #funzione della notazione scientifica di un valore x con errore
@@ -70,10 +71,10 @@ def nes_tex(x,dx=None):
 #questa funzione potrebbe avere errori se una delle due variabili è uguale a zero
 #Author: Francesco Sacco
 def numero_con_errore_latex(x,dx):
-    n,er=principale(x,nult=dx)
-    dn=principale(dx,x)[0]
-    if er==0: return "$"+n+"\\pm"+dn+"$"
-    return "$("+n+"\\pm"+dn+")\\times 10^{"+str(er)+"}$"
+	n,er=principale(x,nult=dx)
+	dn=principale(dx,x)[0]
+	if er==0: return "$"+n+" \\pm "+dn+"$"
+	return "$("+n+" \\pm "+dn+") \\times 10^{"+str(er)+"}$"
 #vettorizzo la funzione
 ne_tex=vectorize(numero_con_errore_latex)
 
@@ -84,24 +85,25 @@ ne_tex=vectorize(numero_con_errore_latex)
 #ATTENZIONE! il file in cui la funzione stampa la matrice viene completamente sovrascritto
 #Author: Francesco Sacco
 def mat_tex(Matrice,titolo=None,file=None):
-    tipo_tabella='{'+(len(Matrice)*'c')+'}'
-    Matrice=transpose(Matrice)
-    if file==None:
-        print('\n\nCopia tutto quello che c\'è tra le linee')
-        print('--------------------------')
-        f=stdout
-    else: f=open(file,'w')
-    print('\\begin{tabular}'+tipo_tabella+'\n\\hline',file=f)
-    if titolo is None:
-        print('\t% qua ci va il titolo della tabella (ricorda di mettere \\\\ alla fine) %\n \\hline',file=f)
-    else: print('\t'+titolo+'\\\\ \n\\hline',file=f)
-    for colonna in Matrice:
-        stringa='\t'
-        for numero in colonna:
-            stringa=stringa+numero+' & '
-        print(stringa[:-2]+'\\\\',file=f)
-    print('\\hline\n\\end{tabular}',file=f)
-    if file==None: print('--------------------------\n\n')
+	Matrice = np.array(Matrice, dtype=np.unicode, ndmin=2)
+	tipo_tabella='{'+(len(Matrice)*'c')+'}'
+	Matrice=transpose(Matrice)
+	if file==None:
+		print('\n\nCopia tutto quello che c\'è tra le linee')
+		print('--------------------------')
+		f=stdout
+	else: f=open(file,'w')
+	print('\\begin{tabular}'+tipo_tabella+'\n\\hline',file=f)
+	if titolo is None:
+		print('\t% qua ci va il titolo della tabella (ricorda di mettere \\\\ alla fine) %\n \\hline',file=f)
+	else: print('\t'+titolo+'\\\\ \n\t\\hline',file=f)
+	for colonna in Matrice:
+		stringa='\t'
+		for numero in colonna:
+			stringa=stringa+numero+' & '
+		print(stringa[:-2]+'\\\\',file=f)
+	print('\t\\hline\n\\end{tabular}',file=f)
+if file==None: print('--------------------------\n\n')
 
 
    
