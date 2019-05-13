@@ -40,11 +40,11 @@ def principale(n,nrif=None,nult=None):
 		print('non puoi usare un numero per l\'ultima cifra maggiore di quello di riferimento')
 		return principale(n)
 	n=round(n,-eu)#arrotondo all'ordine di grandezza di eu
-	if eu>=0: n=int(n)
+	if eu>=0: n=int(n)# se non mi interessa quello che c'è dopo la virgola (es 690\pm20)
 	if absolute(er)==1:return [stringhizza(n),0]
-	return [stringhizza(n),er] #se 3.645*10^-23 si ha che str(n)="3.645" e er=-23
-	return [stringhizza(n),er] #se 3.645*10^-23 si ha che str(n)="3.645" e er=-23
-
+	num=stringhizza(n)
+	num=num+"0"*(-eu-len(num)+num.find(".")+1)# aggiungo gli zeri che mancano
+	return [num,er]
 
 #funzione della notazione scientifica di un singolo numero con un numero di riferimento nrif
 """ad esempio se nrif=500 e n=4896 stampa n con l'ordine di grandezza di nrif, cioè ritorna
@@ -103,7 +103,7 @@ def mat_tex(Matrice,titolo=None,file=None):
 			stringa=stringa+numero+' & '
 		print(stringa[:-2]+'\\\\',file=f)
 	print('\t\\hline\n\\end{tabular}',file=f)
-if file==None: print('--------------------------\n\n')
+	if file==None: print('--------------------------\n\n')
 
 
    
