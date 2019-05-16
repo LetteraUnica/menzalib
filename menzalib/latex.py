@@ -5,7 +5,7 @@ from sys import stdout
 """
 visto che la funzione str(x) ti ritorna la stringa "1e-5" se x=1e-5 ho creato questa
 funzione che ti ritorna 0.00005, funziona solo per gli esponenti negativi,
-prima o poi includerò quelli positivi.
+prima o poi includerò quelli positivi, ma non dovrebbe servire affatto.
 Forse.
 """
 #Author:Francesco Sacco
@@ -24,9 +24,12 @@ def stringhizza(x):
 #Author:Francesco Sacco
 def principale(n,nrif=None,nult=None):
 	if n==0: return ["0",0]
+	temp=nrif
 	if nrif==None:nrif=n
 	if nult==None:
-		if absolute(nrif)==absolute(n): nult=n/100 #ns_tex(456,456)=4.56 x 10^2
+		if absolute(nrif)==absolute(n):
+			if temp==None:nult=n/100 #ns_tex(456,456)=4.56 x 10^2
+			else: nult=n
 		if absolute(nrif)>absolute(n): nult=n    #ns_tex(6,572)=0.06 x 10^2
 		if absolute(nrif)<absolute(n): nult=nrif #ns_tex(572,6)=572
 	if nrif==0.0 or nult==0.0: 
@@ -49,9 +52,24 @@ def principale(n,nrif=None,nult=None):
 """ad esempio se nrif=500 e n=4896 stampa n con l'ordine di grandezza di nrif, cioè ritorna
 	48.96 X 10^2"""
 #Author: Francesco Sacco
-def notazione_scientifica_latex(n,nrif=None,nult=None):
-	n,exp=principale(n,nrif,nult)
-	if exp==0: return "$"+n+"$"
+def notazione_scientifica_latex(n,nrif=None,nult=None,unit=None):
+	prefisso=''
+	rif=nrif
+	if unit!=None:
+		prefix=['y','z','a','f','p','n','\\mu ','m','','k','M','G','T','P','E','Z','Y']
+		zero=prefix.index('')
+		if nrif==None: rif=n
+		ordine_grandezza=int(floor(log10(rif)/3))
+		if ordine_grandezza<-zero or ordine_grandezza>=len(prefix)-1-zero:
+			return numero_con_errore_latex(x,dx)
+		prefisso=prefix[ordine_grandezza+zero]
+		n=n/1000**(ordine_grandezza)
+		if nult!= None:nult=nult/1000**(ordine_grandezza)
+		rif=1
+	else:unit=''
+	n,exp=principale(n,rif,nult)
+	if exp==0: 
+		return "$"+n+"$"+prefisso+unit
 	return "$"+n+" \\times 10^{"+str(exp)+"}$"
 #vettorizzo
 ns_tex=vectorize(notazione_scientifica_latex)
@@ -60,21 +78,35 @@ ns_tex=vectorize(notazione_scientifica_latex)
 #ritorna due stringe, una col valore e l'altro con l'errore fatte in modo che abbiano
 #lo stesso ordine di grandezza
 #Author:Francesco Sacco
-def nes_tex(x,dx=None):
-	if dx==None: return ns_tex(x)    
-	return ns_tex(x,nult=dx), ns_tex(dx,x)
+def nes_tex(x,dx=None,unit=None):
+	if dx==None: return ns_tex(x,unit=unit)    
+	return ns_tex(x,nult=dx,unit=unit), ns_tex(dx,x,unit=unit)
 
 
 #funzione della notazione scientifica di un valore x con errore
 #stampa una stringa contenente i due valori stampati per bene in latex
 #questa funzione potrebbe avere errori se una delle due variabili è uguale a zero
 #Author: Francesco Sacco
-def numero_con_errore_latex(x,dx):
+def numero_con_errore_latex(x,dx,unit=None):
+	prefisso=''
 	rif=x
-	if absolute(x)<1000:rif=1
+	if unit!=None:
+		prefix=['y','z','a','f','p','n','\\mu ','m','','k','M','G','T','P','E','Z','Y']
+		zero=prefix.index('')
+		ordine_grandezza=int(floor(log10(x)/3))
+		if ordine_grandezza<-zero or ordine_grandezza>=len(prefix)-1-zero:
+			return numero_con_errore_latex(x,dx)
+		prefisso=prefix[ordine_grandezza+zero]
+		x=x/1000**(ordine_grandezza)
+		dx=dx/1000**(ordine_grandezza)
+		rif=1
+	else: unit=''
 	n,er=principale(x,rif,dx)
 	dn=principale(dx,rif)[0]
-	if er==0: return "$"+n+" \\pm "+dn+"$"
+	if er==0: 
+		if prefisso+unit=='':
+			return "$"+n+" \\pm "+dn+"$"
+		return "$("+n+" \\pm "+dn+")$"+prefisso+unit
 	return "$("+n+" \\pm "+dn+") \\times 10^{"+str(er)+"}$"
 #vettorizzo la funzione
 ne_tex=vectorize(numero_con_errore_latex)
@@ -102,7 +134,3 @@ def mat_tex(Matrice,file=None):
 	if file==None:
 		print('\t\\hline\n\\end{tabular}')
 		print('--------------------------\n\n')
-
-
-
-   
