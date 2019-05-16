@@ -1,4 +1,5 @@
-from numpy import floor,log10,absolute,round,vectorize,transpose
+import numpy as np
+from numpy import floor,log10,absolute,round,vectorize,transpose,array
 from sys import stdout
 
 """
@@ -84,7 +85,7 @@ ne_tex=vectorize(numero_con_errore_latex)
 #ATTENZIONE! il file in cui la funzione stampa la matrice viene completamente sovrascritto
 #Author: Francesco Sacco, Lorenzo Cavuoti
 def mat_tex(Matrice,file=None):
-	Matrice = np.array(Matrice, dtype=np.unicode, ndmin=2)
+	Matrice = array(Matrice, dtype=np.unicode, ndmin=2)
 	tipo_matrice=len(Matrice)*'c'
 	Matrice=transpose(Matrice)
 	if file is None:
