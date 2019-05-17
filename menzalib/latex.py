@@ -67,12 +67,13 @@ def notazione_scientifica_latex(n,nrif=None,nult=None,unit=None):
 	prefisso=''
 	n,exp=principale(n,nrif,nult,unit=unit)
 	if type(exp)!=int:prefisso=exp; exp=0
-	if exp==0: 
+	if exp==0:
+		if unit is None:
+			return "$"+n+"$"+prefisso
 		return "$"+n+"$"+prefisso+unit
 	return "$"+n+" \\times 10^{"+str(exp)+"}$"
 #vettorizzo
 ns_tex=vectorize(notazione_scientifica_latex)
-
 
 #ritorna due stringe, una col valore e l'altro con l'errore fatte in modo che abbiano
 #lo stesso ordine di grandezza
@@ -98,13 +99,15 @@ def numero_con_errore_latex(x,dx,unit=None):
 	n,er=principale(x,nult=dx,unit=unit)
 	dn=principale(dx,x,unit=unit)[0]
 	if type(er)!=int: prefisso=er; er=0
-	if er==0: 
-		if prefisso+unit=='':
+	if er==0:
+		if unit is not None:
+			prefisso=prefisso+unit
 			return "$"+n+" \\pm "+dn+"$"
-		return "$("+n+" \\pm "+dn+")$"+prefisso+unit
+		return "$("+n+" \\pm "+dn+")$"+prefisso
 	return "$("+n+" \\pm "+dn+") \\times 10^{"+str(er)+"}$"
 #vettorizzo la funzione
 ne_tex=vectorize(numero_con_errore_latex)
+
 
 
 #Funzione che stampa una matrice fatta di stringhe in un formato comodo per latex
@@ -129,12 +132,3 @@ def mat_tex(Matrice,file=None):
 	if file==None:
 		print('\t\\hline\n\\end{tabular}')
 		print('--------------------------\n\n')
-
-
-
-print(ne_tex(1,20,'m'))
-
-
-
-
-

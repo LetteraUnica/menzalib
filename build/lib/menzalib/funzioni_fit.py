@@ -40,9 +40,9 @@ def curve_fitdx(f, x, y, dx=None, dy=None, p0=None, df=None, nit=10, absolute_si
         
         # Eseguo il fit
         sigma_eff = dy
-        chi, chi_old = 1, -1
+        chi, chi_old = 1., -1.
         i=0
-        while (i<10 and (chi-chi_old)/chi > 1e-6):
+        while (i<10 and abs(chi-chi_old)/chi > 1e-6):
             popt, pcov = curve_fit(f, x, y, p0, sigma_eff, absolute_sigma=absolute_sigma)
             sigma_eff = sqrt(dy**2 + (df(x, *popt)*dx)**2)
             chi_old = chi
