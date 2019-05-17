@@ -82,7 +82,7 @@ def numero_con_errore_separato(x,dx=None,unit=None):
 		print('Il valore ',x,' ha un errore nullo')
 		return notazione_scientifica_latex(x,unit=unit)
 	if dx>absolute(x): return 0,notazione_scientifica_latex(dx,nult=dx,unit=unit)    
-	return ns_tex(x,nult=dx,unit=unit), ns_tex(dx,x,unit=unit)
+	return notazione_scientifica_latex(x,nult=dx,unit=unit), notazione_scientifica_latex(dx,x,unit=unit)
 nes_tex=vectorize(numero_con_errore_separato)
 
 #funzione della notazione scientifica di un valore x con errore
@@ -132,7 +132,7 @@ def mat_tex(Matrice,file=None):
 
 
 
-print(ne_tex(1e5,1,'m'))
+print(ne_tex(1,20,'m'))
 
 
 
