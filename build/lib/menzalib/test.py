@@ -23,7 +23,7 @@ class TestSum(unittest.TestCase):
         print("TEST FUNZIONE NOTAZIONE SCIENTIFICA PASSATI")
 
     def test_numero_errore(self):
-        self.assertEqual(mz.ne_tex(1, 0.2), "$1.0 \\pm 0.2$")
+        self.assertEqual(mz.ne_tex(1, 0.2), "$(1.0 \\pm 0.2)$")
         self.assertEqual(mz.ne_tex(1, 20), "$<2 \\times 10^{1}$")
         self.assertEqual(mz.ne_tex(1.987987, 0.2), "$2.0 \\pm 0.2$")
         self.assertEqual(mz.ne_tex(123, 2, unit="F"), "$(123 \\pm 2)$F")

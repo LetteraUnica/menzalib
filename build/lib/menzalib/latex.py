@@ -68,9 +68,8 @@ def notazione_scientifica_latex(n,nrif=None,nult=None,unit=None):
 	n,exp=principale(n,nrif,nult,unit=unit)
 	if type(exp)!=int:prefisso=exp; exp=0
 	if exp==0:
-		if unit is None:
-			return "$"+n+"$"+prefisso
-		return "$"+n+"$"+prefisso+unit
+		if unit is not None: prefisso=prefisso+unit
+		return "$"+n+"$"+prefisso
 	return "$"+n+" \\times 10^{"+str(exp)+"}$"
 #vettorizzo
 ns_tex=vectorize(notazione_scientifica_latex)
@@ -100,10 +99,8 @@ def numero_con_errore_latex(x,dx,unit=None):
 	dn=principale(dx,x,unit=unit)[0]
 	if type(er)!=int: prefisso=er; er=0
 	if er==0:
-		if unit is not None:
-			prefisso=prefisso+unit
-			return "$"+n+" \\pm "+dn+"$"
-		return "$("+n+" \\pm "+dn+")$"+prefisso
+		if unit is not None: prefisso=prefisso+unit
+		return "$"+n+" \\pm "+dn+"$"+prefisso
 	return "$("+n+" \\pm "+dn+") \\times 10^{"+str(er)+"}$"
 #vettorizzo la funzione
 ne_tex=vectorize(numero_con_errore_latex)
