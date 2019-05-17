@@ -53,6 +53,10 @@ def principale(n,nrif=None,nult=None):
 	48.96 X 10^2"""
 #Author: Francesco Sacco
 def notazione_scientifica_latex(n,nrif=None,nult=None,unit=None):
+	if n==0: return "$0$"+unit
+	if nrif==0.0 or nult==0.0: 
+		print('non puoi usare come numero di riferimento o numero dell\'ultima cifra lo zero')
+		return principale(n)
 	prefisso=''
 	rif=nrif
 	if unit!=None:
@@ -78,17 +82,22 @@ ns_tex=vectorize(notazione_scientifica_latex)
 #ritorna due stringe, una col valore e l'altro con l'errore fatte in modo che abbiano
 #lo stesso ordine di grandezza
 #Author:Francesco Sacco
-def nes_tex(x,dx=None,unit=None):
-	if dx==None: return ns_tex(x,unit=unit) 
+def numero_con_errore_separato(x,dx=None,unit=None):
+	if dx==None: 
+		print('Il valore ',x,' ha un errore nullo')
+		return notazione_scientifica_latex(x,unit=unit)
 	if dx>absolute(x): return 0,notazione_scientifica_latex(dx,nult=dx,unit=unit)    
 	return ns_tex(x,nult=dx,unit=unit), ns_tex(dx,x,unit=unit)
-
+nes_tex=vectorize(numero_con_errore_separato)
 
 #funzione della notazione scientifica di un valore x con errore
 #stampa una stringa contenente i due valori stampati per bene in latex
 #questa funzione potrebbe avere errori se una delle due variabili è uguale a zero
 #Author: Francesco Sacco
 def numero_con_errore_latex(x,dx,unit=None):
+	if dx==0:
+		print('Il valore ',x,' ha un errore nullo')
+		return notazione_scientifica_latex(x,unit=unit)
 	if dx>absolute(x): return "$<"+notazione_scientifica_latex(dx,nult=dx,unit=unit)[1:]
 	prefisso=''
 	rif=x
@@ -136,3 +145,12 @@ def mat_tex(Matrice,file=None):
 	if file==None:
 		print('\t\\hline\n\\end{tabular}')
 		print('--------------------------\n\n')
+
+
+
+print(nes_tex(0,0,'m'))
+
+
+
+
+
