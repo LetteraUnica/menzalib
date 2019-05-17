@@ -21,8 +21,11 @@ def stringhizza(x):
 		return "0."+"0"*(exp-dot)+s[:e]# e ritorno il numero per bene
 	return "0."+"0"*(exp-1)+s[:e]#altrimenti torno questo
 
+prefix=['y','z','a','f','p','n','\\mu ','m','','k','M','G','T','P','E','Z','Y']
+zero=prefix.index('')
+
 #Author:Francesco Sacco
-def principale(n,nrif=None,nult=None):
+def principale(n,nrif=None,nult=None,unit=None):
 	if n==0: return ["0",0]
 	temp=nrif
 	if nrif==None:nrif=n
@@ -38,7 +41,14 @@ def principale(n,nrif=None,nult=None):
 	#se il numero di riferimento è più piccolo di quello dell'ultima cifra,
 	#allora bisogna usare nrif come numero per l'ultima cifra
 	if nult>nrif: nult=nrif 
-	er=int(floor(log10(absolute(nrif))))#guardo l'ordine di grandezza di nrif
+	if unit==None: er=int(floor(log10(absolute(nrif))))#guardo l'ordine di grandezza di nrif
+	else:# nel caso si usasse l'unità di misura
+		er=int(floor(log10(absolute(nrif))/3)) #scelgo la potenza di 1000 giusta
+		#se non esiste un prefisso adatto uso la notazione scientifica
+		if er<-zero or er>len(prefix)-1-zero: return principale(n,nrif,nult)
+		#scelgo il prefisso adatto
+		prefisso=prefix[er+zero]
+		er=int(er*3)
 	#porto n nell'ordine di grandezza di nrif nel caso in cui l'esponente è 1 o -1 non uso la n.s.
 	n,nult=n/10**er,nult/10**er 
 	eu=int(floor(log10(absolute(nult))))#guardo l'ordine di grandezza di nult
@@ -46,32 +56,17 @@ def principale(n,nrif=None,nult=None):
 	if eu>=0: n=int(n)# se non mi interessa quello che c'è dopo la virgola (es 690\pm20)
 	num=stringhizza(n)
 	num=num+"0"*(-eu-len(num)+num.find(".")+1)# aggiungo gli zeri che mancano
-	return [num,er] #ritorna la stringa del numero e l'esponente (x=num*10^er)
+	if unit==None: return [num,er] #ritorna la stringa del numero e l'esponente (x=num*10^er)
+	return [num,prefisso]
 
 #funzione della notazione scientifica di un singolo numero con un numero di riferimento nrif
 """ad esempio se nrif=500 e n=4896 stampa n con l'ordine di grandezza di nrif, cioè ritorna
 	48.96 X 10^2"""
 #Author: Francesco Sacco
 def notazione_scientifica_latex(n,nrif=None,nult=None,unit=None):
-	if n==0: return "$0$"+unit
-	if nrif==0.0 or nult==0.0: 
-		print('non puoi usare come numero di riferimento o numero dell\'ultima cifra lo zero')
-		return principale(n)
 	prefisso=''
-	rif=nrif
-	if unit!=None:
-		prefix=['y','z','a','f','p','n','\\mu ','m','','k','M','G','T','P','E','Z','Y']
-		zero=prefix.index('')
-		if nrif==None: rif=n
-		ordine_grandezza=int(floor(log10(rif)/3))
-		if ordine_grandezza<-zero or ordine_grandezza>=len(prefix)-1-zero:
-			return numero_con_errore_latex(x,dx)
-		prefisso=prefix[ordine_grandezza+zero]
-		n=n/1000**(ordine_grandezza)
-		if nult!= None:nult=nult/1000**(ordine_grandezza)
-		rif=1
-	else:unit=''
-	n,exp=principale(n,rif,nult)
+	n,exp=principale(n,nrif,nult,unit=unit)
+	if type(exp)!=int:prefisso=exp; exp=0
 	if exp==0: 
 		return "$"+n+"$"+prefisso+unit
 	return "$"+n+" \\times 10^{"+str(exp)+"}$"
@@ -100,20 +95,9 @@ def numero_con_errore_latex(x,dx,unit=None):
 		return notazione_scientifica_latex(x,unit=unit)
 	if dx>absolute(x): return "$<"+notazione_scientifica_latex(dx,nult=dx,unit=unit)[1:]
 	prefisso=''
-	rif=x
-	if unit!=None:
-		prefix=['y','z','a','f','p','n','\\mu ','m','','k','M','G','T','P','E','Z','Y']
-		zero=prefix.index('')
-		ordine_grandezza=int(floor(log10(x)/3))
-		if ordine_grandezza<-zero or ordine_grandezza>=len(prefix)-1-zero:
-			return notazione_scientifica_latex(x,dx,unit=unit)
-		prefisso=prefix[ordine_grandezza+zero]
-		x=x/1000**(ordine_grandezza)
-		dx=dx/1000**(ordine_grandezza)
-		rif=1
-	else: unit=''
-	n,er=principale(x,rif,dx)
-	dn=principale(dx,rif)[0]
+	n,er=principale(x,nult=dx,unit=unit)
+	dn=principale(dx,x,unit=unit)[0]
+	if type(er)!=int: prefisso=er; er=0
 	if er==0: 
 		if prefisso+unit=='':
 			return "$"+n+" \\pm "+dn+"$"
@@ -148,7 +132,7 @@ def mat_tex(Matrice,file=None):
 
 
 
-print(nes_tex(0,0,'m'))
+print(ne_tex(1e5,1,'m'))
 
 
 
