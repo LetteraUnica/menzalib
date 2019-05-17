@@ -79,7 +79,8 @@ ns_tex=vectorize(notazione_scientifica_latex)
 #lo stesso ordine di grandezza
 #Author:Francesco Sacco
 def nes_tex(x,dx=None,unit=None):
-	if dx==None: return ns_tex(x,unit=unit)    
+	if dx==None: return ns_tex(x,unit=unit) 
+	if dx>absolute(x): return 0,notazione_scientifica_latex(dx,nult=dx,unit=unit)    
 	return ns_tex(x,nult=dx,unit=unit), ns_tex(dx,x,unit=unit)
 
 
@@ -88,6 +89,7 @@ def nes_tex(x,dx=None,unit=None):
 #questa funzione potrebbe avere errori se una delle due variabili è uguale a zero
 #Author: Francesco Sacco
 def numero_con_errore_latex(x,dx,unit=None):
+	if dx>absolute(x): return "$<"+notazione_scientifica_latex(dx,nult=dx,unit=unit)[1:]
 	prefisso=''
 	rif=x
 	if unit!=None:
@@ -95,7 +97,7 @@ def numero_con_errore_latex(x,dx,unit=None):
 		zero=prefix.index('')
 		ordine_grandezza=int(floor(log10(x)/3))
 		if ordine_grandezza<-zero or ordine_grandezza>=len(prefix)-1-zero:
-			return numero_con_errore_latex(x,dx)
+			return notazione_scientifica_latex(x,dx,unit=unit)
 		prefisso=prefix[ordine_grandezza+zero]
 		x=x/1000**(ordine_grandezza)
 		dx=dx/1000**(ordine_grandezza)
