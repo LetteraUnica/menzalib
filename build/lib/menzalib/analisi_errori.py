@@ -6,6 +6,7 @@ from scipy.stats import chi2
 from numdifftools.nd_algopy import Gradient, Derivative
 from inspect import signature
 
+
 # Author: Lorenzo Cavuoti
 def drapp(x, dx, y, dy):
     """
@@ -46,6 +47,13 @@ def dprod(x, dx, y, dy):
     x, dx = array(x), array(dx)
     y, dy = array(y), array(dy)
     return sqrt((y*dx)**2 + (x*dy)**2)
+
+
+
+def dsomm(dx,dy):
+    dx,dy=array(dx),array(dy)
+    return sqrt(dx**2+dy**2)
+
 
 #Author Lorenzo Cavuoti
 def dpoli(x, dx, a, da=0):
