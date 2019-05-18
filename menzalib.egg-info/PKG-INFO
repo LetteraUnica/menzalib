@@ -1,10 +1,6 @@
 Metadata-Version: 2.1
 Name: menzalib
-<<<<<<< HEAD
 Version: 0.8.26
-=======
-Version: 0.8.10
->>>>>>> master
 Summary: Funzioni utili per lab3
 Home-page: https://github.com/LetteraUnica/menzalib
 Author: ['Lorenzo Cavuoti', 'Francesco Sacco']
