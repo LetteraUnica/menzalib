@@ -27,23 +27,24 @@ zero=prefix.index('')
 #Author:Francesco Sacco
 def principale(n,nrif=None,nult=None,unit=None):
 	if n==0: return ["0",0]
-	temp=nrif
 	if nrif==None:nrif=n
+	nrif=absolute(nrif)
 	if nult==None:
-		if absolute(nrif)==absolute(n):
+		if nrif==absolute(n):
 			if temp==None:nult=n/100 #ns_tex(456,456)=4.56 x 10^2
-			else: nult=n
-		if absolute(nrif)>absolute(n): nult=n    #ns_tex(6,572)=0.06 x 10^2
-		if absolute(nrif)<absolute(n): nult=nrif #ns_tex(572,6)=572
+			else: nult=absolute(n)
+		if nrif>absolute(n): nult=n    #ns_tex(6,572)=0.06 x 10^2
+		if nrif<absolute(n): nult=nrif #ns_tex(572,6)=572
+	nult=absolute(nult)
 	if nrif==0.0 or nult==0.0: 
 		print('non puoi usare come numero di riferimento o numero dell\'ultima cifra lo zero')
 		return principale(n)
 	#se il numero di riferimento è più piccolo di quello dell'ultima cifra,
 	#allora bisogna usare nrif come numero per l'ultima cifra
 	if nult>nrif: nult=nrif 
-	if unit==None: er=int(floor(log10(absolute(nrif))))#guardo l'ordine di grandezza di nrif
+	if unit==None: er=int(floor(log10(nrif)))#guardo l'ordine di grandezza di nrif
 	else:# nel caso si usasse l'unità di misura
-		er=int(floor(log10(absolute(nrif))/3)) #scelgo la potenza di 1000 giusta
+		er=int(floor(log10(nrif)/3)) #scelgo la potenza di 1000 giusta
 		#se non esiste un prefisso adatto uso la notazione scientifica
 		if er<-zero or er>len(prefix)-1-zero: return principale(n,nrif,nult)
 		#scelgo il prefisso adatto
@@ -51,7 +52,7 @@ def principale(n,nrif=None,nult=None,unit=None):
 		er=int(er*3)
 	#porto n nell'ordine di grandezza di nrif nel caso in cui l'esponente è 1 o -1 non uso la n.s.
 	n,nult=n/10**er,nult/10**er 
-	eu=int(floor(log10(absolute(nult))))#guardo l'ordine di grandezza di nult
+	eu=int(floor(log10(nult)))#guardo l'ordine di grandezza di nult
 	n=round(n,-eu)#arrotondo all'ordine di grandezza di eu
 	if eu>=0: n=int(n)# se non mi interessa quello che c'è dopo la virgola (es 690\pm20)
 	num=stringhizza(n)
@@ -116,9 +117,10 @@ def mat_tex(Matrice,file=None):
 	tipo_matrice=len(Matrice)*'c'
 	Matrice=transpose(Matrice)
 	if file is None:
-		print('\n\nCopia tutto quello che c\'è tra le linee')
+		print('\n\nCopia tutto quello che c\'è tra le linee\n')
 		print('--------------------------')
-		print('\\begin{tabular}{'+tipo_matrice+'}\n\\hline')
+		print('\\begin{tabular}{'+tipo_matrice+'}\n\t\\hline')
+		print('\t% Qua mettici il titolo, ricordati di mettere le \\\\ alla fine % \n\t\\hline')
 		f=stdout
 	else: f=open(file,'w')
 	for colonna in Matrice:
@@ -128,4 +130,4 @@ def mat_tex(Matrice,file=None):
 		print(stringa[:-2]+'\\\\',file=f)
 	if file==None:
 		print('\t\\hline\n\\end{tabular}')
-		print('--------------------------\n\n')
+		print('\n--------------------------\n\n')
