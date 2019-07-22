@@ -1,3 +1,3 @@
 #!/bin/bash
-python3 -m pip install --user --upgrade twine
-twine upload dist/*
+pip install -U twine
+echo Esegui questo\: twine upload dist/*

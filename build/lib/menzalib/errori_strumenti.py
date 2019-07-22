@@ -1,4 +1,4 @@
-from numpy import sqrt, vectorize, sort
+from numpy import sqrt, vectorize, sort, absolute
 
 
 # Author: Francesco Sacco
@@ -8,6 +8,7 @@ def errore_ddp_digitale(V):
     supponendo che si sia scelta la scala corretta.
     La ddp deve essere data in Volt
     """
+    V=absolute(V)
     if V<0.2: return sqrt(V**2*25e-6+1e-8)
     if V<2:   return sqrt(V**2*25e-6+1e-6)
     if V<20:  return sqrt(V**2*25e-6+1e-4)
@@ -42,6 +43,7 @@ def errore_osc_volt(V,scala=None):
     i.e. quella dove il segnale si vede meglio senza che questo esca dallo schermo
     La ddp deve essere data in volt
     """
+    V=absolute(V)
     if scala!=None: return sqrt((V*0.04)**2+(scala/10)**2)
     scala=sort([2e-3,2e-2,2e-1,2,5e-3,5e-2,5e-1,5,1e-2,1e-1,1])
     for i in scala:
@@ -61,6 +63,7 @@ def errore_osc_tempo(t,scala=None):
     Il tempo deve essere dato in secondi
     """
 	## da 5ns a 50s comprendente 1,2.5,5 *10^i
+    t=absolute(t)
     if scala!=None: return scala*0.04+t*5e-5+5e-10
     scala=[5e-9]
     for i in range (-8,2):
