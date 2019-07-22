@@ -27,6 +27,7 @@ zero=prefix.index('')
 #Author:Francesco Sacco
 def principale(n,nrif=None,nult=None,unit=None):
 	if n==0: return ["0",0]
+	temp=nrif
 	if nrif==None:nrif=n
 	nrif=absolute(nrif)
 	if nult==None:
