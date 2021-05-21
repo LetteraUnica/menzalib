@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="latin1") as fh:
 
 setuptools.setup(
     name="menzalib",
-    version="1.0.2",
+    version="1.1.0",
     author=["Lorenzo Cavuoti", "Francesco Sacco"],
     author_email="lorenzocav97@gmail.com",
     description="Funzioni utili per lab3",
@@ -16,7 +16,7 @@ setuptools.setup(
     install_requires=[
         'numpy',
         'scipy',
-        'numdifftools',
+        'jax'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
