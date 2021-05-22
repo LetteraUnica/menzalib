@@ -1,10 +1,22 @@
+import warnings
 import numpy as np
 from numpy import sqrt, absolute, log, ones, zeros, array, transpose
 from numpy.linalg import multi_dot
+from numpy.random import sample
 from scipy.optimize import curve_fit
 from scipy.stats import chi2
 from numdifftools.nd_algopy import Gradient, Derivative
 from inspect import signature
+
+from scipy import stats
+from jax import random
+from jax import numpy as jnp
+from warnings import warn
+
+from jax.config import config
+config.update("jax_enable_x64", True)
+
+import time
 
 
 # Author: Lorenzo Cavuoti
@@ -176,16 +188,43 @@ def jacobiana(f,x):
     return J
 
 #Author Lorenzo Cavuoti, Francesco Sacco
-def dy(f, x, pcov,jac=None):
+def dy(f, x, pcov, jac=None, n_samples=1e6, seed=42):
     """
-    Data una variabile aleatoria x, calcola matrice di covarianza della variabile aleatoria y=f(x).
-    Parametri:
-    f(x, y, ...): funzione R^n->R^m che restituisce y=f(x)
-    x: tupla, array o numpy array che indica il punto in cui calcolare la matrice di covarianza
-    pcov: Matrice di covarianza della variabile aleatoria x, se viene dato un vettore v
-        la matrice di covarianza  diagonale con la diagonale uguale a v, diag(pcov)=v
-    jac, Opzionale: funzione che restituisce la matrice jacobiana della funzione f in un punto x,
-        se non data la jacobiana è approssimata numericamente
+    Data una variabile aleatoria x, calcola matrice di covarianza della
+    variabile aleatoria y=f(x).
+
+    Il calcolo di default è fatto probabilisticamente, ovvero non si propaga
+    l'errore usando la derivata ma si fa un sampling dalla distribuzione della x,
+    poi successivamente si ricostruisce la matrice di convarianza della y.
+    Questo metodo è esatto e funziona anche se la funzione f è in presenza di
+    un massimo o un minimo, tuttavia in questi casi la distribuzione della y
+    non è più gaussiana e vanno trattati con cura, la funzione notifica questo
+    con un warning.
+    L'unico problema di questo metodo è che potrebbe essere lento, sopratutto
+    nel caso di funzioni f molto complicate e/o con output in alta dimensione,
+    se la funzione risulta lenta si può abbassare il parametro n_samples, 
+    tenendo conto del fatto che l'errore relativo su ciascun elemento della
+    matrice di covarianza va come 1/sqrt(n_samples), di default n_samples=1e6 
+    cosi' l'errore è sulla terza cifra.
+
+    Se si vuole propagare gli errori col metodo "classico" si può passare
+    come argomento in jac una funzione che calcola la jacobiana nel punto x,
+    un buon pacchetto per calcolare la jacobiana senza smattare è jax,
+    sviluppato da google: https://github.com/google/jax
+
+    Args:
+        f(x, y, ...): funzione R^n->R^m che restituisce y=f(x)
+        x (tupla, array o numpy array): indica il punto in cui calcolare
+            la matrice di covarianza
+        pcov (2d array): Matrice di covarianza della variabile aleatoria x
+        jac (Callable, optional): Funzione che restituisce la matrice jacobiana
+            della funzione f in un punto x. Defaults to None
+        n_samples ([int, float], optional): Samples to draw from f. Defaults to 1e6.
+        seed (int, optional): seed of the random number generator. Defaults to 42.
+
+
+    Returns:
+        [float, 2d array]: Matrice di covarianza di y=f(x)
 
     Es: Calcolo dell'errore su y=f(x)=x/(1+x**2) in x=2 +- 0.1
     In questo caso la matrice di covarianza (cov) è uno scalare tale che cov==dx**2
@@ -195,35 +234,35 @@ def dy(f, x, pcov,jac=None):
             return x/(1+x**2)
     >>> mz.dy(f, 2, 0.1**2)
    	0.012000000000000004
-   	
-   	Calcolo dell'errore su 
-    
-
-
-    Casi particolari:
-    Indico con J(x) la jacobiana di f in x
-    Se f: R->R ==> J(x)=f'(x)
-    Se f: R^n->R ==> J(x)=gradiente(f)(x)
     """
-    x, pcov = array(x, dtype=np.double), array(pcov, dtype=np.double) #per far diventare tutto un array di numpy
-    if jac==None: J = jacobiana(f,x) #se la jacobiana non è stata fornita me la calcolo
-    else: # Vedo quanti argomenti ha jac e li immetto come vettore x
-        if callable(jac)==False: J=array(jac,dtype=np.double)#nel caso la giacobiana è una matrice
-        else:#nel caso in cui la giacobiana è una funzione
-            if (callable(jac)==True and x.ndim!=0 and len(signature(jac).parameters) == len(x)):
-                def g(x): return jac(*x)
-                return dy(f, x, pcov, g)
-            J=jac(x) #prendo la giacobiana calcolata in x
-    if pcov.ndim==0: return pcov*J
-    if pcov.ndim==1: 
-        pcov=pcov**2 #passo da deviazione standar a varianza 
-        pcov=np.diagflat(pcov) # Creo una matrice diagonale con gli errori
 
-    if x.ndim!=0 and len(signature(f).parameters) == len(x): # Vedo quanti argomenti ha f e li immetto come vettore x
+    x, pcov = jnp.array(x, dtype=jnp.float64), jnp.array(pcov, dtype=jnp.float64)
+
+    # Vedo quanti argomenti ha f e li immetto come vettore x
+    if x.ndim!=0 and len(signature(f).parameters) == len(x): 
         def g(x): return f(*x)
-        return dy(g, x, pcov, jac)
+        return dy(g, x, pcov, jac, n_samples, seed)
+
+    # Calcolo l'errore standard
+    if jac is not None:
+        J=jac(x)
+        return J@pcov@J.T
+
+    # Altrimenti calcolo quello statistico
+    key = random.PRNGKey(seed)
+    samples = random.multivariate_normal(key, mean=x, cov=pcov, shape=(int(n_samples),))
+    y = f(samples.T)
+
+    # Test per vedere se la distribuzione della y è gaussiana
+    if (normal_test(f(x), jnp.mean(y, axis=1), jnp.std(y, axis=1, ddof=1)/jnp.sqrt(n_samples)) < 1e-5).any():
+        message = f"\nThe output distribution isn't normally distributed anymore\n"
+        message += f"A possible cause is that the function f is very close to a maximum/minimum"
+        warn(message, RuntimeWarning)
+
+    return jnp.cov(y, ddof=1)
+
+
+def normal_test(a, b, std):
+    """Returns the probability that a is equal to b given the variance"""
+    return 1 - abs(stats.norm.cdf(b, a, std) - stats.norm.cdf(a-(b-a), b, std))
     
-    # Ritorno la matrice di covarianza
-    cov_y = multi_dot([J,pcov,transpose(J)])
-    if (cov_y.size == 1): return sqrt(cov_y.flatten())[0] # Ritorna l'errore se la funzione va da R^n -> R
-    return cov_y
