@@ -1,3 +1,4 @@
+LICENSE.txt
 README.md
 setup.py
 menzalib/__init__.py

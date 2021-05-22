@@ -1,4 +1,3 @@
-import warnings
 import numpy as np
 from numpy import sqrt, absolute, log, ones, zeros, array, transpose
 from numpy.linalg import multi_dot
@@ -15,8 +14,6 @@ from warnings import warn
 
 from jax.config import config
 config.update("jax_enable_x64", True)
-
-import time
 
 
 # Author: Lorenzo Cavuoti
@@ -191,7 +188,9 @@ def jacobiana(f,x):
 def dy(f, x, pcov, jac=None, n_samples=1e6, seed=42):
     """
     Data una variabile aleatoria x, calcola matrice di covarianza della
-    variabile aleatoria y=f(x).
+    variabile aleatoria y=f(x). Nota che la matrice di covarianza corrisponde
+    all'errore al quadrato, di conseguenza in caso di funzione da R^n->R
+    si deve fare la radice per ottenere l'errore
 
     Il calcolo di default è fatto probabilisticamente, ovvero non si propaga
     l'errore usando la derivata ma si fa un sampling dalla distribuzione della x,
@@ -236,12 +235,15 @@ def dy(f, x, pcov, jac=None, n_samples=1e6, seed=42):
    	0.012000000000000004
     """
 
-    x, pcov = jnp.array(x, dtype=jnp.float64), jnp.array(pcov, dtype=jnp.float64)
+    x, pcov = jnp.array(x, ndmin=1, dtype=jnp.float64), jnp.array(pcov, ndmin=2, dtype=jnp.float64)
 
     # Vedo quanti argomenti ha f e li immetto come vettore x
+
+    
     if x.ndim!=0 and len(signature(f).parameters) == len(x): 
-        def g(x): return f(*x)
-        return dy(g, x, pcov, jac, n_samples, seed)
+        g = lambda x: f(*x)
+    else:
+        g = f
 
     # Calcolo l'errore standard
     if jac is not None:
@@ -251,18 +253,37 @@ def dy(f, x, pcov, jac=None, n_samples=1e6, seed=42):
     # Altrimenti calcolo quello statistico
     key = random.PRNGKey(seed)
     samples = random.multivariate_normal(key, mean=x, cov=pcov, shape=(int(n_samples),))
-    y = f(samples.T)
+    y = g(samples.T)
 
     # Test per vedere se la distribuzione della y è gaussiana
-    if (normal_test(f(x), jnp.mean(y, axis=1), jnp.std(y, axis=1, ddof=1)/jnp.sqrt(n_samples)) < 1e-5).any():
-        message = f"\nThe output distribution isn't normally distributed anymore\n"
+    true_mean = g(x)
+    try:
+        sample_mean = jnp.mean(y, axis=1)
+        std = jnp.std(y, axis=1, ddof=1)/jnp.sqrt(n_samples)
+    except IndexError:
+        sample_mean = jnp.mean(y)
+        std = jnp.std(y, ddof=1)/jnp.sqrt(n_samples)
+    
+    if (normal_test(true_mean, sample_mean, std) < 1e-5).any():
+        message = f"\nThe output distribution of input x: {x} isn't normally distributed anymore\n"
         message += f"A possible cause is that the function f is very close to a maximum/minimum"
         warn(message, RuntimeWarning)
 
-    return jnp.cov(y, ddof=1)
+    return np.asarray(jnp.cov(y, ddof=1))
 
 
 def normal_test(a, b, std):
-    """Returns the probability that a is equal to b given the variance"""
+    """Returns the probability that a is equal to b given the standard deviation.
+    The distribution is assumed to be normal"""
     return 1 - abs(stats.norm.cdf(b, a, std) - stats.norm.cdf(a-(b-a), b, std))
-    
+
+
+def propagate_errors(f, x, dx, jac=None, n_samples=1e4, seed=42):
+    """Propagates the errors over all the elements of the array x
+    To see how the error propagation is performed see the documentation
+    of dy
+
+    Returns:
+        [array]: Array with the same size of x with the errors 
+    """
+    return np.sqrt([dy(f, x[i], dx[i]**2, jac, n_samples, seed+i) for i in range(len(x))])
