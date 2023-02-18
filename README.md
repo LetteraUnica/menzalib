@@ -14,7 +14,7 @@ Infine funzioni che permettono stampare una tabella in LaTeX senza dover riscriv
 Per imparare come funziona la libreria andare sulla [**Wiki**](https://github.com/LetteraUnica/menzalib/wiki)
 
 ## Dimostrazione
-Calcolo l'errore di $y=f(x)=x^2 + 1/\sin(x)$ con $x=2 \pm 0.1$
+Calcolo dell'errore di $y=f(x)=x^2 + 1/\sin(x)$ con $x=2 \pm 0.1$
 ```python
 def f(x):
    return x**2 + 1/np.sin(x)
